@@ -72,3 +72,6 @@ A library manage system
 
 [用户注销]
 - 选择后进行一次提示，确认后注销用户登录状态，恢复[用户注册]和[用户登录]的可见度，删除[用户注销]的可见度
+
+## UML Class
+![Lib System](https://user-images.githubusercontent.com/49596040/232563514-850aee6f-aedb-411d-8ad1-e21525b0a81b.svg)
