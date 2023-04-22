@@ -1,14 +1,22 @@
 # LibManager
 A library manage system
+# 数据库
+gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812
 
-# 开发路线
+# 环境
+需自行安装mysql的java驱动程序：http://dev.mysql.com/downloads/connector/j/
 
-## 角色：
+请参阅该教程：https://www.runoob.com/java/java-mysql-connect.html
+
+项目结构按照SpringMVC的结构进行设计，但并非为了使用SpringMVC，而是为了方便后期的扩展。
+# 项目结构
+
+## 角色
 - 管理员
 - 普通用户
 - 游客
 
-## 功能：
+## 功能
 
 ### **书籍相关**
 
