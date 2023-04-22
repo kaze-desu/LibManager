@@ -1,7 +1,7 @@
-package com.xiaohuo.libmamnager.db;
+package com.xiaohuo.libmanager.db;
 import com.mysql.cj.jdbc.Driver;
 /**
- * @author Wang Boyun
+ * @author Xiaohuo(Wang Boyun)
  */
 public class DatabaseConnectionImpl implements DatabaseConnection {
 

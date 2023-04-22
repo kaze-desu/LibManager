@@ -1,5 +1,0 @@
-package com.xiaohuo.libmamnager.Controller.BookManager;
-
-public interface Add {
-    void add();
-}

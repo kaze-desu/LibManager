@@ -1,4 +1,4 @@
-package com.xiaohuo.libmamnager.Controller.BookManager.Resource;
+package com.xiaohuo.libmanager.Controller.BookManager.Resource;
 
 public class BooksImpl implements Books {
     private int isbn;

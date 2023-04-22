@@ -1,4 +1,4 @@
-package com.xiaohuo.libmamnager.db;
+package com.xiaohuo.libmanager.db;
 
 public class DatabaseDisconnectionImpl {
 }
