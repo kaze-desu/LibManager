@@ -1,8 +1,13 @@
 package com.xiaohuo.libmanager.db;
 
-public interface DatabaseConnection {
+import com.xiaohuo.libmanager.Exception.CustomException;
+
+import java.sql.Connection;
+
+public interface DatabaseConnection
+{
     /**
      * Connect to database
      */
-    void connect();
+    Connection connect() throws CustomException;
 }
