@@ -1,6 +1,6 @@
 package com.xiaohuo.libmanager.db;
 
-import com.xiaohuo.libmanager.Exception.CustomException;
+import com.xiaohuo.libmanager.exception.CollectionException;
 
 import java.sql.Connection;
 /**
@@ -12,7 +12,7 @@ public interface DatabaseConnection
     /**
      * Connect to database
      * @return Connection return a connection thread
-     * @throws CustomException throw a collection of exception
+     * @throws CollectionException throw a collection of exception
      */
-    Connection connect() throws CustomException;
+    Connection connect() throws CollectionException;
 }

@@ -1,6 +1,6 @@
 package com.xiaohuo.libmanager;
 
-import com.xiaohuo.libmanager.Exception.CustomException;
+import com.xiaohuo.libmanager.exception.CollectionException;
 
 import java.util.*;
 import java.io.*;
@@ -20,9 +20,9 @@ public class Init
     /**
      * The function use to initialize the config file.
      */
-    public Init() throws CustomException
+    public Init() throws CollectionException
     {
-        List<Exception> exceptions = new ArrayList<Exception>();
+        List<Exception> exceptions = new ArrayList<>();
         while (true)
         {
             if (checkConfig())
@@ -68,18 +68,17 @@ public class Init
         readConfig();
         if (exceptions.size() > 0)
         {
-            throw new CustomException(exceptions);
+            throw new CollectionException(exceptions);
         }
     }
 
     /**
      *The function use to identify the config exist or not exist and return the status.
      * @return Identify config exist or not, and ensure the config content is correct.
-     * @throws IOException Throw the error if reading or writing config met any wrong.
      */
-    public boolean checkConfig() throws CustomException
+    public boolean checkConfig() throws CollectionException
     {
-        List<Throwable>exceptions = new ArrayList<Throwable>();
+        List<Throwable>exceptions = new ArrayList<>();
         File file = new File(setting);
         //Create the file if it's not exist.
         if(!file.exists())
@@ -95,6 +94,7 @@ public class Init
             }
             try
             {
+                assert createFile != null;
                 createFile.close();
             }
             catch (IOException e)
@@ -112,39 +112,42 @@ public class Init
         {
             exceptions.add(e);
         }
-
         //Check each field exist or not.
         boolean configExist = false;
-        if (props.getProperty("username") != null)
+        String username = "username";
+        String password = "password";
+        String address = "address";
+        String databaseName = "databaseName";
+        if (props.getProperty(username) != null)
         {
-            username = props.getProperty("username");
+            this.username = props.getProperty("username");
             configExist = true;
         }
         else
         {
             System.out.println("Config broken, username not found");
         }
-        if (props.getProperty("password") != null)
+        if (props.getProperty(password) != null)
         {
-            password = props.getProperty("password");
+            this.password = props.getProperty("password");
         }
         else
         {
             System.out.println("Config broken, password not found");
             configExist = false;
         }
-        if (props.getProperty("address") != null)
+        if (props.getProperty(address) != null)
         {
-            address = props.getProperty("address");
+            this.address = props.getProperty("address");
         }
         else
         {
             System.out.println("Config broken,address not found");
             configExist = false;
         }
-        if (props.getProperty("databaseName") != null)
+        if (props.getProperty(databaseName) != null)
         {
-            databaseName = props.getProperty("databaseName");
+            this.databaseName = props.getProperty("databaseName");
         }
         else
         {
@@ -153,7 +156,7 @@ public class Init
         }
         if (exceptions.size() > 0)
         {
-            throw new CustomException(exceptions);
+            throw new CollectionException(exceptions);
         }
         return configExist;
     }
@@ -175,9 +178,9 @@ public class Init
             System.out.println("Config file created");
     }
 
-    public void readConfig() throws CustomException
+    public void readConfig() throws CollectionException
     {
-        List<Throwable>exceptions = new ArrayList<Throwable>();
+        List<Throwable>exceptions = new ArrayList<>();
         Properties props = new Properties();
         try
         {
@@ -193,7 +196,7 @@ public class Init
         databaseName = props.getProperty("databaseName");
         if (exceptions.size() > 0)
         {
-            throw new CustomException(exceptions);
+            throw new CollectionException(exceptions);
         }
     }
     public String getUsername()

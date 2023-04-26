@@ -1,6 +1,6 @@
 package com.xiaohuo.libmanager.db;
 
-import com.xiaohuo.libmanager.Exception.CustomException;
+import com.xiaohuo.libmanager.exception.CollectionException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +20,7 @@ public class DatabaseCloseImpl implements DatabaseClose
      * @param conn Connection
      */
     @Override
-    public void close(PreparedStatement pstmt, Connection conn) throws CustomException
+    public void close(PreparedStatement pstmt, Connection conn) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         try
@@ -41,7 +41,7 @@ public class DatabaseCloseImpl implements DatabaseClose
         }
         if (exceptions.size() > 0)
         {
-            throw new CustomException(exceptions);
+            throw new CollectionException(exceptions);
         }
     }
     /**
@@ -51,7 +51,7 @@ public class DatabaseCloseImpl implements DatabaseClose
      * @param conn Connection
      */
     @Override
-    public void close(PreparedStatement pstmt, ResultSet rs, Connection conn) throws CustomException
+    public void close(PreparedStatement pstmt, ResultSet rs, Connection conn) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         try
@@ -80,7 +80,7 @@ public class DatabaseCloseImpl implements DatabaseClose
         }
         if (exceptions.size() > 0)
         {
-            throw new CustomException(exceptions);
+            throw new CollectionException(exceptions);
         }
     }
 

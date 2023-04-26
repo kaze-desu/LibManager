@@ -1,20 +1,20 @@
 package com.xiaohuo.libmanager.db;
-import com.xiaohuo.libmanager.Exception.CustomException;
+import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.Init;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This is a function for connecting to database.
  * @author Xiaohuo(Wang Boyun)
- * Connect to database
  */
 public class DatabaseConnectionImpl implements DatabaseConnection
 {
     private Connection conn;
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     @Override
-    public Connection connect() throws CustomException
+    public Connection connect() throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         Init init = null;
@@ -22,8 +22,9 @@ public class DatabaseConnectionImpl implements DatabaseConnection
         {
             init = new Init();
         }
-        catch (CustomException e)
+        catch (CollectionException e)
         {
+            e.printStackTrace();
             exceptions.add(e);
         }
         try
@@ -32,6 +33,7 @@ public class DatabaseConnectionImpl implements DatabaseConnection
         }
         catch (ClassNotFoundException e)
         {
+            e.printStackTrace();
             exceptions.add(e);
         }
         assert init != null;
@@ -51,9 +53,10 @@ public class DatabaseConnectionImpl implements DatabaseConnection
             System.out.println("Connect Error, please check your database information");
             exceptions.add(e);
         }
+        // Throw all the exceptions
         if (exceptions.size() > 0)
         {
-            throw new CustomException(exceptions);
+            throw new CollectionException(exceptions);
         }
         return conn;
     }
