@@ -9,12 +9,11 @@ import java.util.List;
  * This is a function for connecting to database.
  * @author Xiaohuo(Wang Boyun)
  */
-public class DatabaseConnectionImpl implements DatabaseConnection
+public class DatabaseConnect
 {
-    private Connection conn;
+    private static Connection conn;
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    @Override
-    public Connection connect() throws CollectionException
+    public static Connection connect() throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         Init init = null;

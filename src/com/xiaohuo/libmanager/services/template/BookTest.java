@@ -1,5 +1,6 @@
 package com.xiaohuo.libmanager.services.template;
 
+import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.AddService;
 import com.xiaohuo.libmanager.services.BaseBooks;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ class BookTest
      * Nothing here.
      */
     @Test
-    void getBookInfo()
+    void getBookInfo() throws CollectionException
     {
         ArrayList<BaseBooks> books = new ArrayList<>();
         books.add(new Book("tittle1","author1","publisher1","category1","isbn1"));
