@@ -1,5 +1,6 @@
 package com.xiaohuo.libmanager;
 
+import com.xiaohuo.libmanager.db.DatabaseConnect;
 import com.xiaohuo.libmanager.exception.CollectionException;
 
 import java.util.*;
@@ -14,6 +15,7 @@ public class Init
     private String password = "null";
     private String address = "null";
     private String databaseName = "null";
+    private String testMode = "false";
     private final String rootPath = System.getProperty("user.dir") + "/src/com/xiaohuo/libmanager";
     private final String setting = rootPath + "/setting.properties";
 
@@ -25,22 +27,24 @@ public class Init
         List<Exception> exceptions = new ArrayList<>();
         while (true)
         {
+            //Check if the config file is exist.
             if (checkConfig())
             {
                 break;
             }
+            //If the config file is not exist, create a new one.
             Scanner scanner = new Scanner(System.in);
+            System.out.println("Please input your database address:");
+            address = scanner.nextLine();
             System.out.println("Please input your database username:");
             username = scanner.nextLine();
             System.out.println("Please input your database password:");
             password = scanner.nextLine();
-            System.out.println("Please input your database address:");
-            address = scanner.nextLine();
             System.out.println("Please input your database name:");
             databaseName = scanner.nextLine();
+            System.out.println("Your database address is: " + address);
             System.out.println("Your database username is: " + username);
             System.out.println("Your database password is: " + password);
-            System.out.println("Your database address is: " + address);
             System.out.println("Your database name is: " + databaseName);
             System.out.println("Is this correct? (Y/N)");
             String confirm = scanner.nextLine();
@@ -48,7 +52,14 @@ public class Init
             {
                 try
                 {
-                    createConfig(username, password, address);
+                    //Test the database connection, if failed, return to the beginning.
+                    if(!DatabaseConnect.check(username, password, address, databaseName))
+                    {
+                        System.out.println("Connect test failed, please check your data or or internet status.");
+                        continue;
+                    }
+                    System.out.println("Connect test success, creating config file...");
+                    createConfig();
                 }
                 catch (IOException e)
                 {
@@ -118,6 +129,7 @@ public class Init
         String password = "password";
         String address = "address";
         String databaseName = "databaseName";
+        String testMode = "testMode";
         if (props.getProperty(username) != null)
         {
             this.username = props.getProperty("username");
@@ -154,6 +166,15 @@ public class Init
             System.out.println("Config broken,databaseName not found");
             configExist = false;
         }
+        if (props.getProperty(testMode) != null)
+        {
+            this.testMode = props.getProperty("testMode");
+        }
+        else
+        {
+            System.out.println("Config broken,testMode not found");
+            configExist = false;
+        }
         if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
@@ -162,18 +183,16 @@ public class Init
     }
     /**
      * The function use to create the config file.
-     * @param username The username of database.
-     * @param password The password of database.
-     * @param address The address of database.
      * @throws IOException Throw the error if reading or writing config met any wrong.
      */
-    public void createConfig(String username,String password,String address) throws IOException
+    public void createConfig() throws IOException
     {
             Properties props = new Properties();
             props.setProperty("username", username);
             props.setProperty("password", password);
             props.setProperty("address", address);
             props.setProperty("databaseName", databaseName);
+            props.setProperty("testMode", testMode);
             props.store(new FileOutputStream(setting), "Config file for library manager");
             System.out.println("Config file created");
     }
@@ -194,6 +213,7 @@ public class Init
         password = props.getProperty("password");
         address = props.getProperty("address");
         databaseName = props.getProperty("databaseName");
+        testMode = props.getProperty("testMode");
         if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
@@ -214,6 +234,11 @@ public class Init
     public String getDatabaseName()
     {
         return databaseName;
+    }
+    public boolean getTestMode()
+    {
+        String testMode = "true";
+        return this.testMode.equals(testMode);
     }
 
 }

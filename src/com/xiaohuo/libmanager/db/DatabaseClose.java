@@ -16,8 +16,30 @@ public class DatabaseClose
 {
     /**
      * Close database connection in no ResultSet case.
+     * @param conn Connection
+     */
+    public static void close(Connection conn) throws CollectionException
+    {
+        List<Throwable> exceptions = new ArrayList<>();
+        try
+        {
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            exceptions.add(e);
+        }
+        if (exceptions.size() > 0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    /**
+     * Close database connection in PreparedStatement case.
      * @param pstmt PreparedStatement
      * @param conn Connection
+     * @throws CollectionException CollectionException
      */
     public static void close(PreparedStatement pstmt, Connection conn) throws CollectionException
     {
