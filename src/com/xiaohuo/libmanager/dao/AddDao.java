@@ -20,7 +20,6 @@ import java.util.List;
 
 public class AddDao
 {
-    public static final String COPY_RIGHT = "CopyRight";
     private Connection conn = null;
     private PreparedStatement pstmt = null;
     private ResultSet rs = null;
@@ -74,7 +73,6 @@ public class AddDao
      */
     public void add(String columnSql,ArrayList<String> columnList,String bookSql,ArrayList<String> bookList) throws CollectionException
     {
-        //TODO 考虑如何使用JDBC Batch将语句一并提交到数据库，减少调用，增加效率
         conn = DatabaseConnect.connect();
         //Check the test mode flag.
         boolean testMode = new Init().getTestMode();
@@ -86,20 +84,25 @@ public class AddDao
             throw new CollectionException(exceptions);
         }
         //Check if the table has the column.
-       //TODO 本处数量判断有问题，需要修改,，考虑通过检查，将不存在的列的位置(i)存储
-        int count = 0;
+        ArrayList<String>columnNullList = new ArrayList<>();
         try
         {
             pstmt = conn.prepareStatement(columnSql);
-            for (int i = 0; i < columnList.size(); i++)
-            {
-                pstmt.setString(1,columnList.get(i));
-                pstmt.addBatch();
-                if(testMode){System.out.println("try to check column: "+ columnList.get(i));}
-            }
-            int[] result = pstmt.executeBatch();
 
-            //rs = pstmt.executeQuery();
+            for (String s : columnList)
+            {
+                pstmt.setString(1, s);
+                rs = pstmt.executeQuery();
+                if (!rs.next())
+                {
+                    columnNullList.add(s);
+                }
+                if (testMode)
+                {
+                    System.out.println("try to check column: " + s);
+                }
+            }
+
         }
         catch (SQLException e)
         {
@@ -108,34 +111,11 @@ public class AddDao
         }
 
         //If not, add the column.
-        try
+        if(columnNullList.size()>0)
         {
-            if(count<columnList.size())
-            {
-                for (int i = 0; i < columnList.size(); i++)
-                {
-                    String addSql = "ALTER TABLE "+ table +" ADD "+columnList.get(i)+" VARCHAR(255)";
-                    try
-                    {
-                        pstmt = conn.prepareStatement(addSql);
-                        pstmt.addBatch();
-                    }
-                    catch (SQLException e)
-                    {
-                        e.printStackTrace();
-                        exceptions.add(e);
-                    }
-                }
-                int[] result = pstmt.executeBatch();
-                //Check if the test mode is on.
-                if(testMode){System.out.println("Ran columnSQL and updated: "+result.length+" rows");}
-            }
+            addColumn(conn,columnNullList);
         }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-            exceptions.add(e);
-        }
+        //TODO 考虑如何使用JDBC Batch将语句一并提交到数据库，减少调用，增加效率
         //Add books to the table.
         try
         {
@@ -162,7 +142,43 @@ public class AddDao
         //Close connection.
         DatabaseClose.close(pstmt,conn);
     }
+    private void addColumn(Connection conn,ArrayList<String> columnList) throws CollectionException
+    {
+        ArrayList<Exception>exceptions = new ArrayList<>();
+        boolean testMode = new Init().getTestMode();
+            if(0<columnList.size())
+            {
+                try
+                {
+                    for (String s : columnList)
+                    {
+                        String addSql = "ALTER TABLE " + table + " ADD " + s + " VARCHAR(255)";
+                        try
+                        {
+                            pstmt = conn.prepareStatement(addSql);
+                            pstmt.addBatch();
+                        } catch (SQLException e)
+                        {
+                            e.printStackTrace();
+                            exceptions.add(e);
+                        }
+                    }
+                int[] result = pstmt.executeBatch();
+                //Check if the test mode is on.
+                if(testMode){System.out.println("Ran columnSQL and updated: "+result.length+" rows");}
+            }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                    exceptions.add(e);
+                }
+        }
 
+        if(exceptions.size()>1)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
     /**
      * Add books to database.
      * @Type: Book
@@ -226,7 +242,7 @@ public class AddDao
         //Check if the table has the column Issn and Copyright.
         String columnSql = "SHOW COLUMNS FROM "+table+" LIKE ?";
         columnList.add("Issn");
-        columnList.add("COPY_RIGHT");
+        columnList.add("CopyRight");
 
         //Add books to the table.
         String newspaperSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Issn,CopyRight) VALUES (?,?,?,?,?,?,?)";
