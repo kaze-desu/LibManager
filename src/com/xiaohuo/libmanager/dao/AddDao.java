@@ -10,8 +10,7 @@ import com.xiaohuo.libmanager.services.template.Journal;
 import com.xiaohuo.libmanager.services.template.Newspaper;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Add books to database.
@@ -22,7 +21,6 @@ public class AddDao
 {
     private Connection conn = null;
     private PreparedStatement pstmt = null;
-    private ResultSet rs = null;
     private final String table = "BookList";
     private boolean init = false;
 
@@ -68,10 +66,9 @@ public class AddDao
      * @param columnSql SQL for checking if the table has the column.
      * @param columnList List of columns.
      * @param bookSql SQL for adding books.
-     * @param bookList List of books.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public void add(String columnSql,ArrayList<String> columnList,String bookSql,ArrayList<String> bookList) throws CollectionException
+    public void add(String columnSql,ArrayList<String> columnList,String bookSql,Map<Integer,ArrayList<String>> bookList) throws CollectionException
     {
         conn = DatabaseConnect.connect();
         //Check the test mode flag.
@@ -92,7 +89,7 @@ public class AddDao
             for (String s : columnList)
             {
                 pstmt.setString(1, s);
-                rs = pstmt.executeQuery();
+                ResultSet rs = pstmt.executeQuery();
                 if (!rs.next())
                 {
                     columnNullList.add(s);
@@ -115,26 +112,8 @@ public class AddDao
         {
             addColumn(conn,columnNullList);
         }
-        //TODO 考虑如何使用JDBC Batch将语句一并提交到数据库，减少调用，增加效率
         //Add books to the table.
-        try
-        {
-            pstmt = conn.prepareStatement(bookSql);
-
-            for (int i = 0; i < bookList.size(); i++)
-            {
-                pstmt.setString(i+1,bookList.get(i));
-                if(testMode){System.out.println("Adding bookList :"+bookList.get(i));}
-            }
-            int update = pstmt.executeUpdate();
-            //Check if the test mode is on.
-            if(testMode) {System.out.println("Ran bookSQL and updated: "+update+" rows");}
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-            exceptions.add(e);
-        }
+        addBooks(conn,bookSql,bookList);
         if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
@@ -144,7 +123,7 @@ public class AddDao
     }
     private void addColumn(Connection conn,ArrayList<String> columnList) throws CollectionException
     {
-        ArrayList<Exception>exceptions = new ArrayList<>();
+        ArrayList<Throwable>exceptions = new ArrayList<>();
         boolean testMode = new Init().getTestMode();
             if(0<columnList.size())
             {
@@ -179,6 +158,48 @@ public class AddDao
             throw new CollectionException(exceptions);
         }
     }
+    private void addBooks(Connection conn, String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
+    {
+        boolean testMode = new Init().getTestMode();
+        List<Throwable> exceptions = new ArrayList<>();
+        for (int i = 0;i<bookList.size();i++)
+        {
+            try
+            {
+                pstmt = conn.prepareStatement(bookSql);
+                ArrayList<String>list = bookList.get(i);
+                for (int j = 0;j<list.size();j++)
+                {
+                    pstmt.setString(j+1,list.get(j));
+                    if(testMode){System.out.println("Adding :"+list.get(j));}
+                }
+                pstmt.addBatch();
+                if(testMode){System.out.println("Will add bookList :"+bookList.get(i));}
+                //Check if the test mode is on.
+
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
+        }
+        int [] result;
+        try
+        {
+            result = pstmt.executeBatch();
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
+        if (exceptions.size() > 0)
+        {
+            throw new CollectionException(exceptions);
+        }
+
+    }
     /**
      * Add books to database.
      * @Type: Book
@@ -195,13 +216,15 @@ public class AddDao
 
         //Add books to the table.
         String bookSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Isbn) VALUES (?,?,?,?,?,?)";
+        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : booksInfo)
         {
             //Cast the object to Book, because we need the Isbn which only in book class.
             Book book = (Book) baseBooks;
             ArrayList<String> bookList = book.getBookInfo();
+            list.put(booksInfo.indexOf(book),bookList);
             //Call the add method.
-            add(columnSql,columnList,bookSql,bookList);
+            add(columnSql,columnList,bookSql,list);
         }
     }
 
@@ -221,11 +244,14 @@ public class AddDao
 
         //Add journals to the table.
         String journalSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Issn) VALUES (?,?,?,?,?,?)";
+        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : journalInfo)
         {
             Journal journal = (Journal) baseBooks;
-            ArrayList<String> journalList = journal.getBookInfo();
-            add(columnSql,columnList,journalSql,journalList);
+            ArrayList<String> bookList = journal.getBookInfo();
+            list.put(journalInfo.indexOf(journal),bookList);
+            //Call the add method.
+            add(columnSql,columnList,journalSql,list);
         }
     }
 
@@ -246,11 +272,14 @@ public class AddDao
 
         //Add books to the table.
         String newspaperSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Issn,CopyRight) VALUES (?,?,?,?,?,?,?)";
+        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : newspaperInfo)
         {
             Newspaper newspaper = (Newspaper) baseBooks;
             ArrayList<String> newspaperList = newspaper.getBookInfo();
-            add(columnSql,columnList,newspaperSql,newspaperList);
+            list.put(newspaperInfo.indexOf(newspaper),newspaperList);
+            //Call the add method.
+            add(columnSql,columnList,newspaperSql,list);
         }
     }
 }

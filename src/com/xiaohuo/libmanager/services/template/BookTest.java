@@ -39,8 +39,8 @@ class BookTest
         newspapers.add(new Newspaper("tittle6","author6","publisher6","category6","issn6","date6"));
 
         AddService addService = new AddService();
-        //addService.add(books);
-        //addService.add(journals);
+        addService.add(books);
+        addService.add(journals);
         addService.add(newspapers);
     }
 }
