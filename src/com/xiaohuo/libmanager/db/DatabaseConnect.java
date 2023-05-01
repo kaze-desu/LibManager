@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * This is a function for connecting to database.
- * @author Xiaohuo(Wang Boyun)
+ * @author Xiaohuo (Wang Boyun)
  */
 public class DatabaseConnect
 {

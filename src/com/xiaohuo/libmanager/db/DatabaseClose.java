@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * Close database connection
- * @author xiaohuo(Wang Boyun)
+ * @author Xiaohuo (Wang Boyun)
  */
 public class DatabaseClose
 {

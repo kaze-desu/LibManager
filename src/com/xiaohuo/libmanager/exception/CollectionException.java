@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * This is a function for collecting exceptions.
  * It can collect all the exceptions and throw them together, I thought it would be useful in sometimes (Like when you need to solve a lot of exceptions in a loop), so I wrote it.
- * @author xiaohuo(WANG BOYUN)
+ * @author Xiaohuo (Wang Boyun)
  */
 public class CollectionException extends Exception
 {

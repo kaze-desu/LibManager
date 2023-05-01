@@ -18,7 +18,6 @@ public class Init
     private String testMode = "false";
     private final String rootPath = System.getProperty("user.dir") + "/src/com/xiaohuo/libmanager";
     private final String setting = rootPath + "/setting.properties";
-
     /**
      * The function use to initialize the config file.
      */
@@ -240,5 +239,4 @@ public class Init
         String testMode = "true";
         return this.testMode.equals(testMode);
     }
-
 }

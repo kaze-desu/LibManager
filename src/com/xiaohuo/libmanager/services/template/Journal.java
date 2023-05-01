@@ -7,11 +7,10 @@ import java.util.ArrayList;
 /**
  * @Type: Journal
  * @see BaseBooks
- * @author xiaohuo(WANG BOYUN)
+ * @author Xiaohuo (Wang Boyun)
  */
 public class Journal extends BaseBooks
 {
-    private final String type = "Journal";
     private final String issn;
     /**
      * This is the constructor of Journal, which is used to initialize the information of a journal.
@@ -20,6 +19,7 @@ public class Journal extends BaseBooks
     {
         super(tittle, author, publisher, category);
         this.issn = issn;
+        String type = TypeList.JOURNAL.getType();
         setType(type);
     }
 

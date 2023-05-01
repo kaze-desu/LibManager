@@ -7,12 +7,11 @@ import java.util.ArrayList;
 /**
  * @Type: Newspaper
  * @see BaseBooks
- * @author xiaohuo(WANG BOYUN)
+ * @author Xiaohuo (Wang Boyun)
  */
 public class Newspaper extends BaseBooks
 
 {
-    private final String type = "Newspaper";
     private final String issn;
     private final String copyRight;
     /**
@@ -24,6 +23,7 @@ public class Newspaper extends BaseBooks
         this.issn = issn;
         this.copyRight = copyRight;
 
+        String type = TypeList.NEWSPAPER.getType();
         setType(type);
     }
 

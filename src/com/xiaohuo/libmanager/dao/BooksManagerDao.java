@@ -4,10 +4,6 @@ import com.xiaohuo.libmanager.Init;
 import com.xiaohuo.libmanager.db.DatabaseClose;
 import com.xiaohuo.libmanager.db.DatabaseConnect;
 import com.xiaohuo.libmanager.exception.CollectionException;
-import com.xiaohuo.libmanager.services.BaseBooks;
-import com.xiaohuo.libmanager.services.template.Book;
-import com.xiaohuo.libmanager.services.template.Journal;
-import com.xiaohuo.libmanager.services.template.Newspaper;
 
 import java.sql.*;
 import java.util.*;
@@ -17,13 +13,13 @@ import java.util.*;
  * @author Xiaohuo (Wang Boyun)
  */
 
-public class AddDao
+public class BooksManagerDao
 {
     private Connection conn = null;
     private PreparedStatement pstmt = null;
-    private final String table = "BookList";
+    private ResultSet rs = null;
+    public static final String BOOK_TABLE = "BooksList";
     private boolean init = false;
-
     /**
      * Initiate the table.
      * @throws CollectionException CollectionException
@@ -35,7 +31,7 @@ public class AddDao
         //Check if the table exists.
         List<Throwable> exceptions = new ArrayList<>();
         conn = DatabaseConnect.connect();
-        String sql = "CREATE TABLE IF NOT EXISTS BookList (BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL)";
+        String sql = "CREATE TABLE IF NOT EXISTS "+BOOK_TABLE+" (BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL)";
         try
         {
             //Create table if not exists.
@@ -125,13 +121,22 @@ public class AddDao
     {
         ArrayList<Throwable>exceptions = new ArrayList<>();
         boolean testMode = new Init().getTestMode();
-            if(0<columnList.size())
+        try
+        {
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        if(0<columnList.size())
             {
                 try
                 {
                     for (String s : columnList)
                     {
-                        String addSql = "ALTER TABLE " + table + " ADD " + s + " VARCHAR(255)";
+                        String addSql = "ALTER TABLE " + BOOK_TABLE + " ADD " + s + " VARCHAR(255)";
                         try
                         {
                             pstmt = conn.prepareStatement(addSql);
@@ -142,7 +147,13 @@ public class AddDao
                             exceptions.add(e);
                         }
                     }
-                int[] result = pstmt.executeBatch();
+                    //Execute the batch.
+                    int[] result = pstmt.executeBatch();
+                    //Commit the changes.
+                    conn.commit();
+                    //Clear the batch.
+                    pstmt.clearBatch();
+
                 //Check if the test mode is on.
                 if(testMode){System.out.println("Ran columnSQL and updated: "+result.length+" rows");}
             }
@@ -162,6 +173,15 @@ public class AddDao
     {
         boolean testMode = new Init().getTestMode();
         List<Throwable> exceptions = new ArrayList<>();
+        try
+        {
+            conn.setAutoCommit(false);
+        }
+        catch (SQLException e)
+        {
+            exceptions.add(e);
+        }
+        int count = 0;
         for (int i = 0;i<bookList.size();i++)
         {
             try
@@ -175,7 +195,7 @@ public class AddDao
                 }
                 pstmt.addBatch();
                 if(testMode){System.out.println("Will add bookList :"+bookList.get(i));}
-                //Check if the test mode is on.
+                count++;
 
             }
             catch (SQLException e)
@@ -183,103 +203,123 @@ public class AddDao
                 e.printStackTrace();
                 exceptions.add(e);
             }
+
+            if (count>1000)
+            {
+                int [] result;
+                try
+                {
+                    result = pstmt.executeBatch();
+                    conn.commit();
+                    pstmt.clearBatch();
+                    count = 0;
+                    if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                    exceptions.add(e);
+                }
+            }
         }
-        int [] result;
-        try
+        if (count>0)
         {
-            result = pstmt.executeBatch();
+            int [] result;
+            try
+            {
+                result = pstmt.executeBatch();
+                conn.commit();
+                pstmt.clearBatch();
+                if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
         if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
         }
 
     }
-    /**
-     * Add books to database.
-     * @Type: Book
-     * @param booksInfo List of books.
-     * @throws CollectionException Exception thrown when there is any error.
-     */
-    public void addBook(ArrayList<BaseBooks> booksInfo) throws CollectionException
+
+    public Map<Integer,ArrayList<String>> search(String column,String value,int size) throws CollectionException
     {
-        ArrayList<String>columnList = new ArrayList<>();
-
-        //Check if the table has the column Isbn.
-        String columnSql = "SHOW COLUMNS FROM "+table+" LIKE ?";
-        columnList.add("Isbn");
-
-        //Add books to the table.
-        String bookSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Isbn) VALUES (?,?,?,?,?,?)";
+        List<Throwable>exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
-        for (BaseBooks baseBooks : booksInfo)
+        int bookId;
+        ArrayList<String>bookInfo = new ArrayList<>();
+        try
         {
-            //Cast the object to Book, because we need the Isbn which only in book class.
-            Book book = (Book) baseBooks;
-            ArrayList<String> bookList = book.getBookInfo();
-            list.put(booksInfo.indexOf(book),bookList);
-            //Call the add method.
-            add(columnSql,columnList,bookSql,list);
+            conn = DatabaseConnect.connect();
+
         }
+        catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        String sql = "SELECT * FROM "+BOOK_TABLE+" WHERE ? = ?";
+        try
+        {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,column);
+            pstmt.setString(2,value);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            rs = pstmt.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            if (rs.next())
+            {
+                bookId = rs.getInt("BookID");
+                for (int i = 0;i<size;i++)
+                {
+                    bookInfo.add(rs.getString(i+1));
+                }
+                list.put(bookId,bookInfo);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        finally
+        {
+            try
+            {
+                DatabaseClose.close(pstmt,conn,rs);
+            }
+            catch (CollectionException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return list;
     }
 
-    /**
-     * Add journal to database.
-     * @Type: Journal
-     * @param journalInfo List of journals.
-     * @throws CollectionException Exception thrown when there is any error.
-     */
-    public void addJournal(ArrayList<BaseBooks>journalInfo)throws CollectionException
-    {
-        ArrayList<String>columnList = new ArrayList<>();
-
-        //Check if the table has the column Issn.
-        String columnSql = "SHOW COLUMNS FROM "+table+" LIKE ?";
-        columnList.add("Issn");
-
-        //Add journals to the table.
-        String journalSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Issn) VALUES (?,?,?,?,?,?)";
-        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
-        for (BaseBooks baseBooks : journalInfo)
-        {
-            Journal journal = (Journal) baseBooks;
-            ArrayList<String> bookList = journal.getBookInfo();
-            list.put(journalInfo.indexOf(journal),bookList);
-            //Call the add method.
-            add(columnSql,columnList,journalSql,list);
-        }
-    }
-
-    /**
-     * Add newspaper to database.
-     * @Type: Newspaper
-     * @param newspaperInfo List of newspapers.
-     * @throws CollectionException Exception thrown when there is any error.
-     */
-    public void addNewspaper(ArrayList<BaseBooks>newspaperInfo)throws CollectionException
-    {
-        ArrayList<String>columnList = new ArrayList<>();
-
-        //Check if the table has the column Issn and Copyright.
-        String columnSql = "SHOW COLUMNS FROM "+table+" LIKE ?";
-        columnList.add("Issn");
-        columnList.add("CopyRight");
-
-        //Add books to the table.
-        String newspaperSql = "INSERT INTO "+table+" (Type,Tittle,Author,Publisher,Category,Issn,CopyRight) VALUES (?,?,?,?,?,?,?)";
-        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
-        for (BaseBooks baseBooks : newspaperInfo)
-        {
-            Newspaper newspaper = (Newspaper) baseBooks;
-            ArrayList<String> newspaperList = newspaper.getBookInfo();
-            list.put(newspaperInfo.indexOf(newspaper),newspaperList);
-            //Call the add method.
-            add(columnSql,columnList,newspaperSql,list);
-        }
-    }
 }
