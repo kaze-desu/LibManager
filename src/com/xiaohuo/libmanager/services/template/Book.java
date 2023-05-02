@@ -8,12 +8,11 @@ import java.util.ArrayList;
  * Book is a type of Books.
  * @Type: Book
  * @see BaseBooks
- * @author xiaohuo(WANG BOYUN)
+ * @author Xiaohuo (Wang Boyun)
  */
 public class Book extends BaseBooks
 {
     private final String isbn;
-    private final String type = "Book";
 
     /**
      * This is the constructor of Book, which is used to initialize the information of a book.
@@ -23,6 +22,7 @@ public class Book extends BaseBooks
         super(tittle, author, publisher, category);
         this.isbn = isbn;
 
+        String type = TypeList.BOOK.getType();
         setType(type);
     }
 

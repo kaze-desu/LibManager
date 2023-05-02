@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="LibmanagerRemoteServer" uuid="35de910b-45da-40fe-8cd0-71fdc15bca14">
+    <data-source source="LOCAL" name="libmanager" uuid="bb6efb69-cfdf-4532-9ba8-459d4eb1eb6b">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812</jdbc-url>
+      <jdbc-url>jdbc:mysql://gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812/test</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

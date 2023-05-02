@@ -7,14 +7,13 @@ import java.util.List;
 
 /**
  * This is a function for connecting to database.
- * @author Xiaohuo(Wang Boyun)
+ * @author Xiaohuo (Wang Boyun)
  */
-public class DatabaseConnectionImpl implements DatabaseConnection
+public class DatabaseConnect
 {
-    private Connection conn;
+    private static Connection conn;
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    @Override
-    public Connection connect() throws CollectionException
+    public static Connection connect() throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         Init init = null;
@@ -59,6 +58,41 @@ public class DatabaseConnectionImpl implements DatabaseConnection
             throw new CollectionException(exceptions);
         }
         return conn;
+    }
+    public static boolean check(String username, String password, String address, String databaseName) throws CollectionException
+    {
+        List<Throwable> exceptions = new ArrayList<>();
+        String url = "jdbc:mysql://"+address+"/"+databaseName+"?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC";
+        try
+        {
+            conn = DriverManager.getConnection(url, username, password);
+            return true;
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Connect Error, please check your database information");
+            e.printStackTrace();
+            exceptions.add(e);
+            return false;
+        }
+        finally
+        {
+            try
+            {
+                DatabaseClose.close(conn);
+                if (exceptions.size() > 0)
+                {
+                    throw new CollectionException(exceptions);
+                }
+            }
+            catch (CollectionException e)
+            {
+                System.out.println("Connect Error, please check your database information");
+                e.printStackTrace();
+                throw new CollectionException(exceptions);
+            }
+        }
+
     }
 }
 

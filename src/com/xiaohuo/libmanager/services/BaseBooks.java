@@ -3,6 +3,7 @@ package com.xiaohuo.libmanager.services;
 import java.util.ArrayList;
 
 /**
+ * BaseBooks is the base class of all types of book.
  * @author xiaohuo (Wang Boyun)
  */
 public abstract class BaseBooks
@@ -39,5 +40,25 @@ public abstract class BaseBooks
         bookInfo.add(publisher);
         bookInfo.add(category);
         return bookInfo;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public String getAuthor()
+    {
+        return author;
+    }
+
+    public String getCategory()
+    {
+        return category;
+    }
+
+    public String getTittle()
+    {
+        return tittle;
     }
 }

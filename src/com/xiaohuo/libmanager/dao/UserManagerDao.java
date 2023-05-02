@@ -1,0 +1,17 @@
+package com.xiaohuo.libmanager.dao;
+
+/**
+ * @author XU XIAO
+ */
+public class UserManagerDao
+{
+    public void addUser(String name, String password)
+    {
+
+    }
+    public boolean verifyNameExist(String name)
+    {
+
+        return false;
+    }
+}
