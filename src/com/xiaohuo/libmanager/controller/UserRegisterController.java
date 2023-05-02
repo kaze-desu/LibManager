@@ -1,18 +1,18 @@
 package com.xiaohuo.libmanager.controller;
 
-import com.xiaohuo.libmanager.services.UserManagerServices;
+import com.xiaohuo.libmanager.services.UserManagerService;
 
 import java.util.Scanner;
 
 /**
  * @author XU XIAO
  */
-public class UserManagerConcroller
+public class UserRegisterController
 {
 
-    public void addUser()
+    public void register()
     {
-        UserManagerServices services = new UserManagerServices();
+        UserManagerService services = new UserManagerService();
         String name;
         String password;
         while(true)

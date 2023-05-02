@@ -2,13 +2,10 @@ package com.xiaohuo.libmanager.services;
 
 import com.xiaohuo.libmanager.dao.UserManagerDao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author XU XIAO
  */
-public class UserManagerServices
+public class UserManagerService
 {
 
     public void addUser(String name, String password)

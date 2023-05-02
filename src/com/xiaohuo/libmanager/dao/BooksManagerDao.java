@@ -66,6 +66,8 @@ public class BooksManagerDao
      */
     public void add(String columnSql,ArrayList<String> columnList,String bookSql,Map<Integer,ArrayList<String>> bookList) throws CollectionException
     {
+        //TODO Try to use ResultSetMetaData to instead of get Row/Column function which need use a loop before.
+
         conn = DatabaseConnect.connect();
         //Check the test mode flag.
         boolean testMode = new Init().getTestMode();
@@ -245,12 +247,12 @@ public class BooksManagerDao
 
     }
 
-    public Map<Integer,ArrayList<String>> search(String column,String value,int size) throws CollectionException
+    public Map<Integer,ArrayList<String>> search(String column,String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         int bookId;
-        ArrayList<String>bookInfo = new ArrayList<>();
+        int columnsNum = 0;
         try
         {
             conn = DatabaseConnect.connect();
@@ -284,24 +286,31 @@ public class BooksManagerDao
         }
         try
         {
-            if (rs.next())
-            {
-                bookId = rs.getInt("BookID");
-                for (int i = 0;i<size;i++)
-                {
-                    bookInfo.add(rs.getString(i+1));
-                }
-                list.put(bookId,bookInfo);
-            }
-            else
-            {
-                return null;
-            }
+            ResultSetMetaData rsData = rs.getMetaData();
+            columnsNum = rsData.getColumnCount();
         }
         catch (SQLException e)
         {
             e.printStackTrace();
             exceptions.add(e);
+        }
+        try
+        {
+            try
+            {
+                while(rs.next())
+                {
+                    ArrayList<String> bookInfo = new ArrayList<>();
+                    for (int i = 0;i<columnsNum;i++)
+                    {
+                        bookInfo.add(rs.getString(i+2));
+                    }
+                    list.put(rs.getInt(1),bookInfo);
+                }
+            } catch (SQLException e)
+            {
+                exceptions.add(e);
+            }
         }
         finally
         {

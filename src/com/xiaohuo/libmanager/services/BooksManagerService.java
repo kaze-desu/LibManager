@@ -141,15 +141,15 @@ public class BooksManagerService
      * @param type The type of the book.
      * @return A list of books.
      */
-    public Map<Integer, ArrayList<String>>searchByType(String type)
+    public Map<Integer, ArrayList<String>>searchByType(String type) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
-        int size = 0;
+        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         if(TypeList.BOOK.getType().equals(type))
         {
             try
             {
-                dao.search("Type",TypeList.BOOK.getType(),TypeList.BOOK.elements());
+                bookList = dao.search("Type",TypeList.BOOK.getType());
             }
             catch (CollectionException e)
             {
@@ -160,7 +160,7 @@ public class BooksManagerService
         {
             try
             {
-                dao.search("Type",TypeList.JOURNAL.getType(),TypeList.JOURNAL.elements());
+                bookList = dao.search("Type",TypeList.JOURNAL.getType());
             }
             catch (CollectionException e)
             {
@@ -171,7 +171,7 @@ public class BooksManagerService
         {
             try
             {
-                dao.search("Type",TypeList.NEWSPAPER.getType(),TypeList.NEWSPAPER.elements());
+                bookList = dao.search("Type",TypeList.NEWSPAPER.getType());
             }
             catch (CollectionException e)
             {
@@ -182,28 +182,78 @@ public class BooksManagerService
         {
             throw new IllegalArgumentException("Invalid type, please check the type of the book including in template or not");
         }
-
-
-        return null;
+        if (exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return bookList;
     }
-    public Map<Integer, ArrayList<String>>searchByTittle(String tittle)
+    public Map<Integer, ArrayList<String>>searchByTittle(String tittle) throws CollectionException
     {
-
-        return null;
+        List<Throwable> exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
+        try
+        {
+            bookList = dao.search("Tittle",tittle);
+        } catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return bookList;
     }
-    public Map<Integer, ArrayList<String>>searchByAuthor(String author)
+    public Map<Integer, ArrayList<String>>searchByAuthor(String author) throws CollectionException
     {
-
-        return null;
+        List<Throwable> exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
+        try
+        {
+            bookList = dao.search("Author",author);
+        } catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return bookList;
     }
-    public Map<Integer, ArrayList<String>>searchByPublisher(String publisher)
+    public Map<Integer, ArrayList<String>>searchByPublisher(String publisher) throws CollectionException
     {
-
-        return null;
+        List<Throwable> exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
+        try
+        {
+            bookList = dao.search("Publisher",publisher);
+        } catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return bookList;
     }
-    public Map<Integer, ArrayList<String>>searchByCategory(String category)
+    public Map<Integer, ArrayList<String>>searchByCategory(String category) throws CollectionException
     {
-
-        return null;
+        List<Throwable> exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
+        try
+        {
+            bookList = dao.search("Category",category);
+        } catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return bookList;
     }
 }
