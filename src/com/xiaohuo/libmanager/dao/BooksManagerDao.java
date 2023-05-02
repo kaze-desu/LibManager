@@ -119,12 +119,20 @@ public class BooksManagerDao
         //Close connection.
         DatabaseClose.close(pstmt,conn);
     }
+
+    /**
+     * Add Column if to database.
+     * @param conn Connection
+     * @param columnList List of columns.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
     private void addColumn(Connection conn,ArrayList<String> columnList) throws CollectionException
     {
         ArrayList<Throwable>exceptions = new ArrayList<>();
         boolean testMode = new Init().getTestMode();
         try
         {
+            //Set auto commit to false to use batch.
             conn.setAutoCommit(false);
         }
         catch (SQLException e)
@@ -171,20 +179,29 @@ public class BooksManagerDao
             throw new CollectionException(exceptions);
         }
     }
+
+    /**
+     * Add books to the table.
+     * @param conn Connection
+     * @param bookSql SQL for adding books.
+     * @param bookList List of books.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
     private void addBooks(Connection conn, String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
     {
         boolean testMode = new Init().getTestMode();
         List<Throwable> exceptions = new ArrayList<>();
         try
         {
+            //Set auto commit to false to use batch.
             conn.setAutoCommit(false);
         }
         catch (SQLException e)
         {
             exceptions.add(e);
         }
-        int count = 0;
-        for (int i = 0;i<bookList.size();i++)
+        //TODO 解决Batch无法多行正常执行的BUG,已确定是setString()语句问题，其在循环中会被覆写，导致只有最后一行数据被添加。
+/*        for (int i = 0;i<bookList.size();i++)
         {
             try
             {
@@ -197,61 +214,49 @@ public class BooksManagerDao
                 }
                 pstmt.addBatch();
                 if(testMode){System.out.println("Will add bookList :"+bookList.get(i));}
-                count++;
+                if (i!=0 &&i == 1000 || i == bookList.size()-1)
+                {
+                    int [] result;
+                    try
+                    {
+                        result = pstmt.executeBatch();
+                        conn.commit();
+                        pstmt.clearBatch();
+                        if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
+                    }
+                    catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                        exceptions.add(e);
+                    }
+                }
 
             }
             catch (SQLException e)
             {
                 e.printStackTrace();
                 exceptions.add(e);
-            }
+            }*/
 
-            if (count>1000)
-            {
-                int [] result;
-                try
-                {
-                    result = pstmt.executeBatch();
-                    conn.commit();
-                    pstmt.clearBatch();
-                    count = 0;
-                    if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
-                }
-                catch (SQLException e)
-                {
-                    e.printStackTrace();
-                    exceptions.add(e);
-                }
-            }
+
         }
-        if (count>0)
-        {
-            int [] result;
-            try
-            {
-                result = pstmt.executeBatch();
-                conn.commit();
-                pstmt.clearBatch();
-                if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-                exceptions.add(e);
-            }
-        }
-        if (exceptions.size() > 0)
+/*        if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
-        }
+        }*/
 
-    }
+    /**
+     *  Search the book by the value whether any column.
+     * @param value The value to search.
+     * @return A list of books.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
 
-    public Map<Integer,ArrayList<String>> search(String column,String value) throws CollectionException
+    public Map<Integer,ArrayList<String>>search(String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
+        Set<Integer> bookIdSet = new TreeSet<>();
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
-        int bookId;
         int columnsNum = 0;
         try
         {
@@ -263,30 +268,21 @@ public class BooksManagerDao
             e.printStackTrace();
             exceptions.add(e);
         }
-        String sql = "SELECT * FROM "+BOOK_TABLE+" WHERE ? = ?";
         try
         {
+            String sql = "SELECT * FROM "+BOOK_TABLE+" LIMIT 1";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,column);
-            pstmt.setString(2,value);
         }
         catch (SQLException e)
         {
             e.printStackTrace();
             exceptions.add(e);
         }
+        ResultSetMetaData rsData = null;
         try
         {
+            rsData = rs.getMetaData();
             rs = pstmt.executeQuery();
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-            exceptions.add(e);
-        }
-        try
-        {
-            ResultSetMetaData rsData = rs.getMetaData();
             columnsNum = rsData.getColumnCount();
         }
         catch (SQLException e)
@@ -294,35 +290,54 @@ public class BooksManagerDao
             e.printStackTrace();
             exceptions.add(e);
         }
-        try
+        for (int i = 1;i<=columnsNum;i++)
         {
+            String sql = "SELECT * FROM "+BOOK_TABLE+" WHERE ? = ?";
+            String columnName;
             try
             {
-                while(rs.next())
+                columnName = rsData.getColumnName(i);
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1,columnName);
+                pstmt.setString(2,value);
+                try
                 {
-                    ArrayList<String> bookInfo = new ArrayList<>();
-                    for (int i = 0;i<columnsNum;i++)
+                    rs = pstmt.executeQuery();
+                    while (rs.next())
                     {
-                        bookInfo.add(rs.getString(i+2));
+                        if(!bookIdSet.contains(rs.getInt(1)))
+                        {
+                            ArrayList<String>bookList = new ArrayList<>();
+                            bookIdSet.add(rs.getInt(1));
+                            for (int j=1;j<=columnsNum;j++)
+                            {
+                                bookList.add(rs.getString(j+1));
+                            }
+                            list.put(rs.getInt(1),bookList);
+                        }
+
                     }
-                    list.put(rs.getInt(1),bookInfo);
                 }
-            } catch (SQLException e)
-            {
-                exceptions.add(e);
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                    exceptions.add(e);
+                }
             }
-        }
-        finally
-        {
-            try
-            {
-                DatabaseClose.close(pstmt,conn,rs);
-            }
-            catch (CollectionException e)
+            catch (SQLException e)
             {
                 e.printStackTrace();
                 exceptions.add(e);
             }
+        }
+        try
+        {
+            DatabaseClose.close(pstmt,conn,rs);
+        }
+        catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
         }
         if(exceptions.size()>0)
         {
@@ -331,4 +346,70 @@ public class BooksManagerDao
         return list;
     }
 
+    /**
+     * Advanced search for a specific column and value.
+     * @param column The way to search.
+     * @param value The value to search for.
+     * @return A map of books that match the search.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
+    public Map<Integer,ArrayList<String>>search(String column,String value) throws CollectionException
+    {
+        List<Throwable>exceptions = new ArrayList<>();
+        Set<Integer> bookIdSet = new TreeSet<>();
+        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
+        try
+        {
+            conn = DatabaseConnect.connect();
+
+        }
+        catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            String sql = "SELECT * FROM "+BOOK_TABLE+" WHERE ? = ?";
+            pstmt = conn.prepareStatement(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            pstmt.setString(1,column);
+            pstmt.setString(2,value);
+            try
+            {
+                rs = pstmt.executeQuery();
+                while (rs.next())
+                {
+                    ArrayList<String>bookList = new ArrayList<>();
+                    for (int j=1;j<=rs.getMetaData().getColumnCount();j++)
+                    {
+                        bookList.add(rs.getString(j+1));
+                    }
+                    list.put(rs.getInt(1),bookList);
+                }
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return list;
+    }
 }

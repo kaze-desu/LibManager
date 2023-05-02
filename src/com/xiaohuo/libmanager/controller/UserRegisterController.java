@@ -42,12 +42,32 @@ public class UserRegisterController
             services.addUser(name, password);
 
         }
-    }
-    public void deleteUser(){
-        String password;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter your password: ");
-        System.out.println();
-        password = scanner.nextLine();
+
+    } public void login()//login into the e-library.
+             {
+                 String name;
+                 String password;
+                 Scanner scanner = new Scanner(System.in);
+                 System.out.println("name:");
+                 name = scanner.nextLine();
+                 System.out.println("password:");
+                 password = scanner.nextLine();
+                 System.out.println("name:" +name);
+                 System.out.println("password:"+password);
+                 String confirm = scanner.nextLine();
+                 if(!name.equals(confirm)&&password.equals(confirm))//e-library will not login
+                 {
+                     for(int i = 0;i <= 5;i++)
+                     {
+                         System.out.println("You have no times to sign in");
+                         break;
+                     }
+
+                 }
+                 else
+                 {
+                     System.out.println("welcome to the e-library world");
+                 }
+             }
 }
-}
+
