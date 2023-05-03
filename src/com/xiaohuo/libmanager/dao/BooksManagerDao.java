@@ -31,7 +31,7 @@ public class BooksManagerDao
         //Check if the table exists.
         List<Throwable> exceptions = new ArrayList<>();
         conn = DatabaseConnect.connect();
-        String sql = "CREATE TABLE IF NOT EXISTS "+BOOK_TABLE+" (BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL)";
+        String sql = "CREATE TABLE IF NOT EXISTS "+BOOK_TABLE+" (BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL);";
         try
         {
             //Create table if not exists.
@@ -141,40 +141,39 @@ public class BooksManagerDao
             exceptions.add(e);
         }
         if(0<columnList.size())
+        {
+            try
             {
-                try
+                for (String s : columnList)
                 {
-                    for (String s : columnList)
+                    String addSql = "ALTER TABLE " + BOOK_TABLE + " ADD " + s + " VARCHAR(255)";
+                    try
                     {
-                        String addSql = "ALTER TABLE " + BOOK_TABLE + " ADD " + s + " VARCHAR(255)";
-                        try
-                        {
-                            pstmt = conn.prepareStatement(addSql);
-                            pstmt.addBatch();
-                        } catch (SQLException e)
-                        {
-                            e.printStackTrace();
-                            exceptions.add(e);
-                        }
+                        pstmt = conn.prepareStatement(addSql);
+                        pstmt.addBatch();
+                    } catch (SQLException e)
+                    {
+                        e.printStackTrace();
+                        exceptions.add(e);
                     }
-                    //Execute the batch.
-                    int[] result = pstmt.executeBatch();
-                    //Commit the changes.
-                    conn.commit();
-                    //Clear the batch.
-                    pstmt.clearBatch();
-
-                //Check if the test mode is on.
-                if(testMode){System.out.println("Ran columnSQL and updated: "+result.length+" rows");}
-            }
-                catch (SQLException e)
-                {
-                    e.printStackTrace();
-                    exceptions.add(e);
                 }
-        }
+                //Execute the batch.
+                int[] result = pstmt.executeBatch();
+                //Commit the changes.
+                conn.commit();
+                //Clear the batch.
+                pstmt.clearBatch();
 
-        if(exceptions.size()>1)
+            //Check if the test mode is on.
+            if(testMode){System.out.println("Ran columnSQL and updated: "+result.length+" rows");}
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
+        }
+        if(exceptions.size()>0)
         {
             throw new CollectionException(exceptions);
         }
@@ -200,29 +199,52 @@ public class BooksManagerDao
         {
             exceptions.add(e);
         }
-        //TODO 解决Batch无法多行正常执行的BUG,已确定是setString()语句问题，其在循环中会被覆写，导致只有最后一行数据被添加。
-/*        for (int i = 0;i<bookList.size();i++)
-        {
             try
             {
                 pstmt = conn.prepareStatement(bookSql);
-                ArrayList<String>list = bookList.get(i);
-                for (int j = 0;j<list.size();j++)
+                //The batch could not use the loop or Iterator after the addBatch() function (I guess), so I use a count variable rather than the key in the loop.
+                int count = 0;
+
+                for (Integer key : bookList.keySet())
                 {
-                    pstmt.setString(j+1,list.get(j));
-                    if(testMode){System.out.println("Adding :"+list.get(j));}
-                }
-                pstmt.addBatch();
-                if(testMode){System.out.println("Will add bookList :"+bookList.get(i));}
-                if (i!=0 &&i == 1000 || i == bookList.size()-1)
-                {
-                    int [] result;
                     try
                     {
-                        result = pstmt.executeBatch();
-                        conn.commit();
-                        pstmt.clearBatch();
-                        if(testMode) {System.out.println("BookSQL Updated: "+ Arrays.toString(result));}
+                        //Next is the worst shit hill in this project
+                        pstmt.setString(1, bookList.get(key).get(0));
+                        pstmt.setString(2, bookList.get(key).get(1));
+                        pstmt.setString(3, bookList.get(key).get(2));
+                        pstmt.setString(4, bookList.get(key).get(3));
+                        pstmt.setString(5, bookList.get(key).get(4));
+                        pstmt.setString(6, bookList.get(key).get(5));
+                        //Next is extra field, add lines as you want.
+                        if (bookList.get(key).size() == 7)
+                        {
+                            pstmt.setString(7, bookList.get(key).get(6));
+                        }
+                        if (bookList.get(key).size() == 8)
+                        {
+                            pstmt.setString(8, bookList.get(key).get(7));
+                        }
+                        if (bookList.get(key).size() == 9)
+                        {
+                            pstmt.setString(9, bookList.get(key).get(8));
+                        }
+                        if (bookList.get(key).size() == 10)
+                        {
+                            pstmt.setString(10, bookList.get(key).get(9));
+                        }
+                        pstmt.addBatch();
+                        count++;
+                        if (count % 1000 == 0 || count == bookList.size() - 1)
+                        {
+                            int[] result = pstmt.executeBatch();
+                            conn.commit();
+                            pstmt.clearBatch();
+                            if (testMode)
+                            {
+                                System.out.println("BookSQL Updated: " + Arrays.toString(result));
+                            }
+                        }
                     }
                     catch (SQLException e)
                     {
@@ -230,20 +252,19 @@ public class BooksManagerDao
                         exceptions.add(e);
                     }
                 }
-
             }
             catch (SQLException e)
             {
                 e.printStackTrace();
                 exceptions.add(e);
-            }*/
-
-
-        }
-/*        if (exceptions.size() > 0)
+            }
+            if (testMode) {System.out.println("Adding :" + pstmt.toString());}
+        if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
-        }*/
+        }
+    }
+
 
     /**
      *  Search the book by the value whether any column.
@@ -330,15 +351,7 @@ public class BooksManagerDao
                 exceptions.add(e);
             }
         }
-        try
-        {
-            DatabaseClose.close(pstmt,conn,rs);
-        }
-        catch (CollectionException e)
-        {
-            e.printStackTrace();
-            exceptions.add(e);
-        }
+        DatabaseClose.close(pstmt,conn,rs);
         if(exceptions.size()>0)
         {
             throw new CollectionException(exceptions);
@@ -356,7 +369,6 @@ public class BooksManagerDao
     public Map<Integer,ArrayList<String>>search(String column,String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
-        Set<Integer> bookIdSet = new TreeSet<>();
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         try
         {
@@ -405,6 +417,10 @@ public class BooksManagerDao
         {
             e.printStackTrace();
             exceptions.add(e);
+        }
+        finally
+        {
+            DatabaseClose.close(pstmt,conn,rs);
         }
         if(exceptions.size()>0)
         {
