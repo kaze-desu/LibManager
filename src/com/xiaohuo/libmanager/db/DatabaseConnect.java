@@ -40,7 +40,7 @@ public class DatabaseConnect
         String password = init.getPassword();
         String address = init.getAddress();
         String databaseName = init.getDatabaseName();
-        String url = "jdbc:mysql://"+address+"/"+databaseName+"?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC";
+        String url = "jdbc:mysql://"+address+"/"+databaseName+"?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
 
         // Open a connection
         try
@@ -61,7 +61,6 @@ public class DatabaseConnect
     }
     public static boolean check(String username, String password, String address, String databaseName) throws CollectionException
     {
-        List<Throwable> exceptions = new ArrayList<>();
         String url = "jdbc:mysql://"+address+"/"+databaseName+"?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC";
         try
         {
@@ -72,25 +71,11 @@ public class DatabaseConnect
         {
             System.out.println("Connect Error, please check your database information");
             e.printStackTrace();
-            exceptions.add(e);
             return false;
         }
         finally
         {
-            try
-            {
-                DatabaseClose.close(conn);
-                if (exceptions.size() > 0)
-                {
-                    throw new CollectionException(exceptions);
-                }
-            }
-            catch (CollectionException e)
-            {
-                System.out.println("Connect Error, please check your database information");
-                e.printStackTrace();
-                throw new CollectionException(exceptions);
-            }
+            DatabaseClose.close(conn);
         }
 
     }

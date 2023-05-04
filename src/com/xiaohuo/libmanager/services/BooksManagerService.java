@@ -34,15 +34,15 @@ public class BooksManagerService
         String type = booksInfo.get(0).type;
         //Identify the type of the book, then transfer the ArrayList object to DAO.
 
-        if (TypeList.BOOK.toString().equals(type))
+        if (TypeList.BOOK.getType().equals(type))
         {
             addBook(booksInfo);
         }
-        else if (TypeList.JOURNAL.toString().equals(type))
+        else if (TypeList.JOURNAL.getType().equals(type))
         {
             addJournal(booksInfo);
         }
-        else if(TypeList.NEWSPAPER.toString().equals(type))
+        else if(TypeList.NEWSPAPER.getType().equals(type))
         {
             addNewspaper(booksInfo);
         }
@@ -100,9 +100,11 @@ public class BooksManagerService
             Journal journal = (Journal) baseBooks;
             ArrayList<String> bookList = journal.getBookInfo();
             list.put(journalInfo.indexOf(journal),bookList);
-            //Call the add method.
-            dao.add(columnSql,columnList,journalSql,list);
         }
+        //Call the add method.
+        dao.add(columnSql,columnList,journalSql,list);
+
+
     }
 
     /**
@@ -127,9 +129,10 @@ public class BooksManagerService
             Newspaper newspaper = (Newspaper) baseBooks;
             ArrayList<String> newspaperList = newspaper.getBookInfo();
             list.put(newspaperInfo.indexOf(newspaper),newspaperList);
-            //Call the add method.
-            dao.add(columnSql,columnList,newspaperSql,list);
         }
+        //Call the add method.
+        dao.add(columnSql,columnList,newspaperSql,list);
+
     }
 
     /*
@@ -137,64 +140,19 @@ public class BooksManagerService
       Search function use to search books by different kinds of ways and return a list.
      */
 
-    /**Search the book by using type.
-     * @param type The type of the book.
-     * @return A list of books.
+
+    /**
+     * Search the book by general search mod.
+     * @return A list of books filtered by tittle.
+     * @throws CollectionException Exception thrown when there is any error.
      */
-    public Map<Integer, ArrayList<String>>searchByType(String type) throws CollectionException
-    {
-        List<Throwable> exceptions = new ArrayList<>();
-        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
-        if(TypeList.BOOK.getType().equals(type))
-        {
-            try
-            {
-                bookList = dao.search("Type",TypeList.BOOK.getType());
-            }
-            catch (CollectionException e)
-            {
-                exceptions.add(e);
-            }
-        }
-        else if(TypeList.JOURNAL.getType().equals(type))
-        {
-            try
-            {
-                bookList = dao.search("Type",TypeList.JOURNAL.getType());
-            }
-            catch (CollectionException e)
-            {
-                exceptions.add(e);
-            }
-        }
-        else if(TypeList.NEWSPAPER.getType().equals(type))
-        {
-            try
-            {
-                bookList = dao.search("Type",TypeList.NEWSPAPER.getType());
-            }
-            catch (CollectionException e)
-            {
-                exceptions.add(e);
-            }
-        }
-        else
-        {
-            throw new IllegalArgumentException("Invalid type, please check the type of the book including in template or not");
-        }
-        if (exceptions.size()>0)
-        {
-            throw new CollectionException(exceptions);
-        }
-        return bookList;
-    }
-    public Map<Integer, ArrayList<String>>searchByTittle(String tittle) throws CollectionException
+    public Map<Integer, ArrayList<String>>search(String value) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
         {
-            bookList = dao.search("Tittle",tittle);
+            bookList = dao.search(value);
         } catch (CollectionException e)
         {
             exceptions.add(e);
@@ -205,6 +163,40 @@ public class BooksManagerService
         }
         return bookList;
     }
+
+    /*
+    Advanced search function.
+     */
+
+    /**Filtered by type.
+     * @param type The type of the book.
+     * @return A list of books filtered by type.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
+    public Map<Integer, ArrayList<String>>searchTypeFilter(String type) throws CollectionException
+    {
+        List<Throwable> exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<String>>bookList = new HashMap<>();
+        try
+        {
+            bookList = dao.search("Type",type);
+        } catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if (exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return bookList;
+    }
+
+    /**
+     * Filtered by author.
+     * @param author The author of the book.
+     * @return A list of books filtered by author.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
     public Map<Integer, ArrayList<String>>searchByAuthor(String author) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
@@ -222,6 +214,13 @@ public class BooksManagerService
         }
         return bookList;
     }
+
+    /**
+     * Filtered by publisher.
+     * @param publisher The publisher of the book.
+     * @return A list of books filtered by publisher.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
     public Map<Integer, ArrayList<String>>searchByPublisher(String publisher) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
@@ -239,6 +238,13 @@ public class BooksManagerService
         }
         return bookList;
     }
+
+    /**
+     *  Filtered by category.
+     * @param category The category of the book.
+     * @return A list of books filtered by category.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
     public Map<Integer, ArrayList<String>>searchByCategory(String category) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
