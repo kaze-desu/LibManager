@@ -11,14 +11,20 @@ import java.util.*;
 /**
  * Add books to database.
  * @author Xiaohuo (Wang Boyun)
+ * @version 1.0
  */
 
 public class BooksManagerDao
 {
+    /*TODO 检查是否存在PreparedStatement使用不当的问题，除值外，禁止使用？代替表名、列名等。
+    *  应当考虑使用String自带的String.format()方法来代替?的输入。
+    */
+
     private Connection conn = null;
     private PreparedStatement pstmt = null;
     private ResultSet rs = null;
-    public static final String BOOK_TABLE = "BooksList";
+    //Table name should not include any capital letter.
+    public static final String BOOK_TABLE = "bookslist";
     private boolean init = false;
     /**
      * Initiate the table.
@@ -302,8 +308,8 @@ public class BooksManagerDao
         ResultSetMetaData rsData = null;
         try
         {
-            rsData = rs.getMetaData();
             rs = pstmt.executeQuery();
+            rsData = rs.getMetaData();
             columnsNum = rsData.getColumnCount();
         }
         catch (SQLException e)
@@ -382,7 +388,8 @@ public class BooksManagerDao
         }
         try
         {
-            String sql = "SELECT * FROM "+BOOK_TABLE+" WHERE ? = ?";
+            String sql = "SELECT * FROM "+BOOK_TABLE+ " WHERE %s LIKE ?";
+            sql = String.format(sql,column);
             pstmt = conn.prepareStatement(sql);
         }
         catch (SQLException e)
@@ -392,15 +399,14 @@ public class BooksManagerDao
         }
         try
         {
-            pstmt.setString(1,column);
-            pstmt.setString(2,value);
+            pstmt.setString(1,"%"+value+"%");
             try
             {
                 rs = pstmt.executeQuery();
                 while (rs.next())
                 {
                     ArrayList<String>bookList = new ArrayList<>();
-                    for (int j=1;j<=rs.getMetaData().getColumnCount();j++)
+                    for (int j=1;j<rs.getMetaData().getColumnCount();j++)
                     {
                         bookList.add(rs.getString(j+1));
                     }

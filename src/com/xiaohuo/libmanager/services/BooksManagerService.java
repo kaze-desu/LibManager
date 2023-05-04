@@ -173,7 +173,7 @@ public class BooksManagerService
      * @return A list of books filtered by type.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public Map<Integer, ArrayList<String>>searchTypeFilter(String type) throws CollectionException
+    public Map<Integer, ArrayList<String>>searchByType(String type) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
