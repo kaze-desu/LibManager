@@ -62,11 +62,10 @@ public class BooksManagerService
     {
         ArrayList<String>columnList = new ArrayList<>();
         //Check if the table has the column Isbn.
-        String columnSql = "SHOW COLUMNS FROM "+BOOK_TABLE+" LIKE ?";
         columnList.add("Isbn");
 
         //Add books to the table.
-        String bookSql = "INSERT INTO "+BOOK_TABLE+" (Type,Tittle,Author,Publisher,Category,Isbn) VALUES (?,?,?,?,?,?)";
+        String bookSql = "INSERT INTO "+BOOK_TABLE+" (Type,Tittle,Author,Publisher,Category,Isbn) VALUES ";
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : booksInfo)
         {
@@ -76,7 +75,7 @@ public class BooksManagerService
             list.put(booksInfo.indexOf(book),bookList);
         }
         //Call the add method.
-        dao.add(columnSql,columnList,bookSql,list);
+        dao.add(columnList,bookSql,list);
     }
 
     /**
@@ -93,7 +92,7 @@ public class BooksManagerService
         columnList.add("Issn");
 
         //Add journals to the table.
-        String journalSql = "INSERT INTO "+BOOK_TABLE+" (Type,Tittle,Author,Publisher,Category,Issn) VALUES (?,?,?,?,?,?)";
+        String journalSql = "INSERT INTO "+BOOK_TABLE+" (Type,Tittle,Author,Publisher,Category,Issn) VALUES ";
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : journalInfo)
         {
@@ -102,7 +101,7 @@ public class BooksManagerService
             list.put(journalInfo.indexOf(journal),bookList);
         }
         //Call the add method.
-        dao.add(columnSql,columnList,journalSql,list);
+        dao.add(columnList,journalSql,list);
 
 
     }
@@ -122,7 +121,7 @@ public class BooksManagerService
         columnList.add("CopyRight");
 
         //Add books to the table.
-        String newspaperSql = "INSERT INTO "+BOOK_TABLE+" (Type,Tittle,Author,Publisher,Category,Issn,CopyRight) VALUES (?,?,?,?,?,?,?)";
+        String newspaperSql = "INSERT INTO "+BOOK_TABLE+" (Type,Tittle,Author,Publisher,Category,Issn,CopyRight) VALUES ";
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : newspaperInfo)
         {
@@ -131,7 +130,7 @@ public class BooksManagerService
             list.put(newspaperInfo.indexOf(newspaper),newspaperList);
         }
         //Call the add method.
-        dao.add(columnSql,columnList,newspaperSql,list);
+        dao.add(columnList,newspaperSql,list);
 
     }
 
@@ -173,7 +172,7 @@ public class BooksManagerService
      * @return A list of books filtered by type.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public Map<Integer, ArrayList<String>>searchTypeFilter(String type) throws CollectionException
+    public Map<Integer, ArrayList<String>>searchByType(String type) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();

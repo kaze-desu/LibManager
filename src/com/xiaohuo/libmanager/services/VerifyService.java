@@ -4,10 +4,16 @@ import javax.xml.namespace.QName;
 
 public class VerifyService
 {
-    public boolean verifyUserStatus()
+    public boolean verifyUserStatus(String name)
     {
-        if (verifyUserStatus())
-        {}
+        if (!verifyUserStatus(name))
+        {
+
+        }
+        else
+        {
+           System.out.println("Welcome back");
+        }
 
 
         return false;
