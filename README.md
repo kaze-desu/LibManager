@@ -82,4 +82,5 @@ gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812
 - 选择后进行一次提示，确认后注销用户登录状态，恢复[用户注册]和[用户登录]的可见度，删除[用户注销]的可见度
 
 ## UML Class
+https://www.processon.com/v/644fd4c67cacb139ebbb9ddd
 ![Lib System (1)](https://user-images.githubusercontent.com/49596040/233851251-987f6024-13ee-4b91-b286-90ede753fc79.svg)
