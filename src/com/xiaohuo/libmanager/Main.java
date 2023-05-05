@@ -1,5 +1,6 @@
 package com.xiaohuo.libmanager;
 
+import com.xiaohuo.libmanager.controller.BookSearchController;
 import com.xiaohuo.libmanager.exception.CollectionException;
 /**
  * Main class
@@ -9,8 +10,10 @@ public class Main
 {
     public static void main(String[] args) throws CollectionException
     {
-        System.out.println("Installed Check...");
+/*        System.out.println("Installed Check...");
         Init init = new Init();
-        System.out.println("Installed Check Complete");
+        System.out.println("Installed Check Complete");*/
+        BookSearchController bookSearchController = new BookSearchController();
+        bookSearchController.search();
     }
 }

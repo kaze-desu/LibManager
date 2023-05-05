@@ -14,7 +14,7 @@ import java.util.*;
  * @version 2.0 (Refactor version)
  */
 
-public class BooksManagerDao
+public class BooksManageDao
 {
 
 
@@ -298,14 +298,13 @@ public class BooksManagerDao
         }
         for (int i = 1;i<=columnsNum;i++)
         {
-            String sql = "SELECT * FROM "+BOOK_TABLE+" WHERE ? = ?";
-            String columnName;
             try
             {
-                columnName = rsData.getColumnName(i);
+                String sql = "SELECT * FROM %s WHERE %s = ?";
+                String columnName = rsData.getColumnName(i);
+                sql = String.format(sql,BOOK_TABLE,columnName);
                 pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1,columnName);
-                pstmt.setString(2,value);
+                pstmt.setString(1,value);
                 try
                 {
                     rs = pstmt.executeQuery();
@@ -367,8 +366,8 @@ public class BooksManagerDao
         }
         try
         {
-            String sql = "SELECT * FROM "+BOOK_TABLE+ " WHERE %s LIKE '?'";
-            sql = String.format(sql,column);
+            String sql = "SELECT * FROM %s WHERE %s LIKE ?";
+            sql = String.format(sql,BOOK_TABLE,column);
             pstmt = conn.prepareStatement(sql);
         }
         catch (SQLException e)

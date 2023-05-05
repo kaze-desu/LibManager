@@ -1,7 +1,7 @@
 package com.xiaohuo.libmanager.services;
 
 
-import com.xiaohuo.libmanager.dao.BooksManagerDao;
+import com.xiaohuo.libmanager.dao.BooksManageDao;
 import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.template.Book;
 import com.xiaohuo.libmanager.services.template.Journal;
@@ -13,15 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.xiaohuo.libmanager.dao.BooksManagerDao.BOOK_TABLE;
+import static com.xiaohuo.libmanager.dao.BooksManageDao.BOOK_TABLE;
 /**
  * This service use to accept data from controller, then classify and unzip the information.
  * ArrayList always appearing in this class, I hope someone could optimize it if there has a smarter way.
  * @author Xiaohuo (Wang Boyun)
  */
-public class BooksManagerService
+public class BooksManageService
 {
-    BooksManagerDao dao = new BooksManagerDao();
+    BooksManageDao dao = new BooksManageDao();
     /**
      * The add function will transfer data to DAO, so it's not solving data, only transfer data.
      * @param booksInfo This param is a ArrayList that type of BaseBooks. For safety reason, I use a function (just like book.getXXX) to get unique value from each different extend class.
