@@ -4,9 +4,7 @@ import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.BooksManageService;
 import com.xiaohuo.libmanager.services.template.TypeList;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * BookSearchController is the controller of searching books.
@@ -34,8 +32,28 @@ public class BookSearchController
             {
                 case "1" ->
                 {
-                    bookId = searchByType();
-                    return bookId;
+                    while (true)
+                    {
+                        System.out.println("Please choice a type:");
+                        Map<Integer, String> typeList = new HashMap<>();
+                        int count = 1;
+                        for (TypeList type:TypeList.values())
+                        {
+                            System.out.println(count+". "+type.getType());
+                            typeList.put(count,type.getType());
+                        }
+                        int type = scanner.nextInt();
+                        if(!typeList.get(type).isEmpty())
+                        {
+                            bookId = searchByType(typeList.get(count));
+                            return bookId;
+                        }
+                        else
+                        {
+                            System.out.println("Please input a valid number!");
+                        }
+                    }
+
                 }
                 case "2" ->
                 {
@@ -74,11 +92,11 @@ public class BookSearchController
         }
 
     }
-    public int searchByType() throws CollectionException
+    public int searchByType(String type) throws CollectionException
     {
         BooksManageService service = new BooksManageService();
         Map<Integer, ArrayList<String>> result;
-        result = service.searchByType(TypeList.BOOK.getType());
+        result = service.searchByType(type);
         int count = 0;
         if (result.size() == 0)
         {
