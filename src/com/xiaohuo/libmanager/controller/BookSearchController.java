@@ -36,16 +36,18 @@ public class BookSearchController
                     {
                         System.out.println("Please choice a type:");
                         Map<Integer, String> typeList = new HashMap<>();
-                        int count = 1;
+                        int count = 0;
                         for (TypeList type:TypeList.values())
                         {
+                            ++count;
                             System.out.println(count+". "+type.getType());
                             typeList.put(count,type.getType());
+
                         }
                         int type = scanner.nextInt();
                         if(!typeList.get(type).isEmpty())
                         {
-                            bookId = searchByType(typeList.get(count));
+                            bookId = searchByType(typeList.get(type));
                             return bookId;
                         }
                         else
@@ -109,9 +111,9 @@ public class BookSearchController
             {
                 int bookId = information.getKey();
                 ArrayList<String> bookInfo = information.getValue();
-                if(count %20==0 && count != 0|| count == result.size())
+                if(count % 20 == 0 && count != 0)
                 {
-                    System.out.println("Continue?");
+                    System.out.println("Continue?(Y/N)");
                     Scanner scanner = new Scanner(System.in);
                     String confirm = scanner.nextLine();
                     if ("N".equals(confirm) || "n".equals(confirm))
@@ -120,10 +122,30 @@ public class BookSearchController
                         bookId = scanner.nextInt();
                         return bookId;
                     }
+                    else if("Y".equals(confirm) || "y".equals(confirm))
+                    {
+                        System.out.println("Book id: \n"+bookId);
+                        for (String list:bookInfo)
+                        {
+                            System.out.print(list + " ");
+                        }
+                    }
+                }
+                else if(count == result.size()-1)
+                {
+                    Scanner scanner = new Scanner(System.in);
+                    System.out.println("Book id: "+bookId);
+                    for (String list:bookInfo)
+                    {
+                        System.out.print(list + " ");
+                    }
+                    System.out.println("Choice your book by inter id:");
+                    bookId = scanner.nextInt();
+                    return bookId;
                 }
                 else
                 {
-                    System.out.print("Book id: "+bookId);
+                    System.out.println("Book id: "+bookId);
                     for (String list:bookInfo)
                     {
                         System.out.print(list + " ");
