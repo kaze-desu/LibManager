@@ -1,5 +1,7 @@
 package com.xiaohuo.libmanager.dao;
 
+import java.util.Scanner;
+
 /**
  * @author XU XIAO
  */
@@ -14,5 +16,7 @@ public class UserManagerDao
 
         return false;
     }
-
+/*    public void UserStatus(){
+        Scanner UserStatus =
+}*/
 }
