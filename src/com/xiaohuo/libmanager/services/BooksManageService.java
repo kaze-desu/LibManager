@@ -21,7 +21,8 @@ import static com.xiaohuo.libmanager.dao.BooksManageDao.BOOK_TABLE;
  */
 public class BooksManageService
 {
-    BooksManageDao dao = new BooksManageDao();
+
+
     /**
      * The add function will transfer data to DAO, so it's not solving data, only transfer data.
      * @param booksInfo This param is a ArrayList that type of BaseBooks. For safety reason, I use a function (just like book.getXXX) to get unique value from each different extend class.
@@ -30,7 +31,6 @@ public class BooksManageService
      */
     public void add(ArrayList<BaseBooks> booksInfo) throws CollectionException
     {
-        dao.initTable();
         String type = booksInfo.get(0).type;
         //Identify the type of the book, then transfer the ArrayList object to DAO.
 
@@ -60,6 +60,7 @@ public class BooksManageService
      */
     public void addBook(ArrayList<BaseBooks> booksInfo) throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         ArrayList<String>columnList = new ArrayList<>();
         //Check if the table has the column Isbn.
         columnList.add("Isbn");
@@ -86,6 +87,7 @@ public class BooksManageService
      */
     public void addJournal(ArrayList<BaseBooks>journalInfo)throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         ArrayList<String>columnList = new ArrayList<>();
         //Check if the table has the column Issn.
         String columnSql = "SHOW COLUMNS FROM "+BOOK_TABLE+" LIKE ?";
@@ -114,6 +116,7 @@ public class BooksManageService
      */
     public void addNewspaper(ArrayList<BaseBooks>newspaperInfo)throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         ArrayList<String>columnList = new ArrayList<>();
         //Check if the table has the column Issn and Copyright.
         String columnSql = "SHOW COLUMNS FROM "+BOOK_TABLE+" LIKE ?";
@@ -147,6 +150,7 @@ public class BooksManageService
      */
     public Map<Integer, ArrayList<String>>search(String value) throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
@@ -174,6 +178,7 @@ public class BooksManageService
      */
     public Map<Integer, ArrayList<String>>searchByType(String type) throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
@@ -198,6 +203,7 @@ public class BooksManageService
      */
     public Map<Integer, ArrayList<String>>searchByAuthor(String author) throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
@@ -222,6 +228,7 @@ public class BooksManageService
      */
     public Map<Integer, ArrayList<String>>searchByPublisher(String publisher) throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
@@ -246,6 +253,7 @@ public class BooksManageService
      */
     public Map<Integer, ArrayList<String>>searchByCategory(String category) throws CollectionException
     {
+        BooksManageDao dao = new BooksManageDao();
         List<Throwable> exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try

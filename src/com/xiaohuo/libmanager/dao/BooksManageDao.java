@@ -22,39 +22,25 @@ public class BooksManageDao
     private PreparedStatement pstmt = null;
     private ResultSet rs = null;
     //Table name should not include any capital letter.
-    public static final String BOOK_TABLE = "bookslist";
-    private boolean init = false;
+    public static final String BOOK_TABLE = "books_list";
     /**
      * Initiate the table.
-     * @throws CollectionException CollectionException
      */
-    public void initTable() throws CollectionException
+    public BooksManageDao() throws CollectionException
     {
-        //Check the test mode flag.
-        boolean testMode = new Init().getTestMode();
-        //Check if the table exists.
         List<Throwable> exceptions = new ArrayList<>();
-        conn = DatabaseConnect.connect();
-        String sql = "CREATE TABLE IF NOT EXISTS "+BOOK_TABLE+" (BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL);";
         try
         {
-            //Create table if not exists.
-            pstmt = conn.prepareStatement(sql);
-            int update = pstmt.executeUpdate();
-            if(testMode){System.out.println("Table created, updated: "+update+"rows");}
+            conn = DatabaseConnect.connect();
+            InitTableDao initTableDao = new InitTableDao(conn);
+            String sql = "BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL";
+            initTableDao.initTable(BOOK_TABLE,sql);
         }
-        catch (SQLException e)
+        catch (CollectionException e)
         {
             e.printStackTrace();
             exceptions.add(e);
-        }finally
-        {
-            //Close connection.
-            DatabaseClose.close(pstmt,conn);
         }
-        //Initiate flag.
-        init = true;
-        //Throw exceptions if any.
         if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
@@ -69,18 +55,21 @@ public class BooksManageDao
      */
     public void add(ArrayList<String> columnList, String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
     {
-        conn = DatabaseConnect.connect();
         //Check the test mode flag.
         boolean testMode = new Init().getTestMode();
         List<Throwable> exceptions = new ArrayList<>();
-        //Check if the table is initiated.
-        if (!init)
-        {
-            exceptions.add(new Exception("Table not initiated, please call initTable() first."));
-            throw new CollectionException(exceptions);
-        }
         //Check if the table has the column.
         ArrayList<String>columnNullList = new ArrayList<>();
+        try
+        {
+            conn = DatabaseConnect.connect();
+
+        }
+        catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
         try
         {
             for (String s : columnList)
@@ -254,14 +243,16 @@ public class BooksManageDao
     /**
      *  Search the book by the value whether any column.
      * @param value The value to search.
-     * @return A list of books.
+     * @return A list of books. Integer is the bookID, and ArrayList is the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
 
     public Map<Integer,ArrayList<String>>search(String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
+        //The set is used to store the bookID to avoid duplicate.
         Set<Integer> bookIdSet = new TreeSet<>();
+        //The map is used to store the bookID and the information of the book.
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         int columnsNum = 0;
         try
@@ -276,6 +267,7 @@ public class BooksManageDao
         }
         try
         {
+            //Get the columns number.(Limit 1 to avoid extra time)
             String sql = "SELECT * FROM "+BOOK_TABLE+" LIMIT 1";
             pstmt = conn.prepareStatement(sql);
         }
@@ -287,8 +279,10 @@ public class BooksManageDao
         ResultSetMetaData rsData = null;
         try
         {
+            //Get the raw data.
             rs = pstmt.executeQuery();
             rsData = rs.getMetaData();
+            //Get the columns number.
             columnsNum = rsData.getColumnCount();
         }
         catch (SQLException e)
@@ -296,6 +290,7 @@ public class BooksManageDao
             e.printStackTrace();
             exceptions.add(e);
         }
+        //Search the value in each column.
         for (int i = 1;i<=columnsNum;i++)
         {
             try
@@ -310,10 +305,12 @@ public class BooksManageDao
                     rs = pstmt.executeQuery();
                     while (rs.next())
                     {
+                        //If the bookID is not in the set, add the book to the map.
                         if(!bookIdSet.contains(rs.getInt(1)))
                         {
                             ArrayList<String>bookList = new ArrayList<>();
                             bookIdSet.add(rs.getInt(1));
+                            //Add the information of the book to the list.
                             for (int j=1;j<=columnsNum;j++)
                             {
                                 bookList.add(rs.getString(j+1));
