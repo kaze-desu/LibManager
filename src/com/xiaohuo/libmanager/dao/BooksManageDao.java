@@ -50,7 +50,7 @@ public class BooksManageDao
     /**
      * Delete book in the table
      * @param deleteSql SQL for delete a book, a journal, or a newspaper
-     * @throws CollectionException
+     * @throws CollectionException Exception thrown when there is any error.
      */
     public void delete(String deleteSql) throws CollectionException
     {
@@ -59,7 +59,8 @@ public class BooksManageDao
         List<Throwable> exceptions = new ArrayList<>();
 
         try{
-            String sql = "DELETE FROM "+BOOK_TABLE+" WHERE "+deleteSql;
+            String sql = "DELETE FROM %s WHERE %s";
+            sql = String.format(sql,BOOK_TABLE,deleteSql);
             pstmt = conn.prepareStatement(sql);
             int update = pstmt.executeUpdate();
             if(update>=1){
@@ -74,7 +75,11 @@ public class BooksManageDao
             exceptions.add(e);
         }
         finally {
-            DatabaseClose.close(pstmt,conn);
+            DatabaseClose.close(conn,pstmt);
+        }
+        if (exceptions.size() > 0)
+        {
+            throw new CollectionException(exceptions);
         }
     }
 
