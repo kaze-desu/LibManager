@@ -62,6 +62,37 @@ public class BooksManageDao
     }
 
     /**
+     * Delete book in the table
+     * @param deleteSql SQL for delete a book, a journal, or a newspaper
+     * @throws CollectionException
+     */
+    public void delete(String deleteSql) throws CollectionException
+    {
+        conn = DatabaseConnect.connect();
+
+        List<Throwable> exceptions = new ArrayList<>();
+
+        try{
+            String sql = "DELETE FROM "+BOOK_TABLE+" WHERE "+deleteSql;
+            pstmt = conn.prepareStatement(sql);
+            int update = pstmt.executeUpdate();
+            if(update>=1){
+                System.out.println("Delete success");
+            }
+            else{
+                System.out.println("Delete fail");
+            }
+        }
+        catch (SQLException e)
+        {
+            exceptions.add(e);
+        }
+        finally {
+            DatabaseClose.close(pstmt,conn);
+        }
+    }
+
+    /**
      * Add books to database in general.
      * @param columnList List of columns.
      * @param bookSql SQL for adding books.
@@ -412,4 +443,6 @@ public class BooksManageDao
         }
         return list;
     }
+
+
 }
