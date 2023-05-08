@@ -41,7 +41,7 @@ public class DatabaseClose
      * @param conn Connection
      * @throws CollectionException CollectionException
      */
-    public static void close(PreparedStatement pstmt, Connection conn) throws CollectionException
+    public static void close(Connection conn,PreparedStatement pstmt) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         try
@@ -71,7 +71,7 @@ public class DatabaseClose
      * @param rs ResultSet
      * @param conn Connection
      */
-    public static void close(PreparedStatement pstmt, Connection conn,ResultSet rs) throws CollectionException
+    public static void close(Connection conn,PreparedStatement pstmt, ResultSet rs) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         try

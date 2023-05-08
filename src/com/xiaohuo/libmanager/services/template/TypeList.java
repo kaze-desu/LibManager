@@ -23,17 +23,16 @@ public enum TypeList
         }
     }
     ,
-    JOURNAL{
-        @Override
-        public String getType(){
+            JOURNAL{
+@Override
+public String getType(){
     return "Journal";
 }
-        @Override
-        public int elements() {
+@Override
+public int elements() {
     return 5;
 }
-    }
-    ,
+    },
     NEWSPAPER{
         @Override
         public String getType(){
