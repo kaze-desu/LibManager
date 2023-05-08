@@ -23,7 +23,7 @@ public enum TypeList
         }
     }
     ,
-            JOURNAL{
+    JOURNAL{
 @Override
 public String getType(){
     return "Journal";

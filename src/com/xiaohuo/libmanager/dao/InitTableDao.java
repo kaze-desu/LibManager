@@ -53,7 +53,7 @@ public class InitTableDao
         }finally
         {
             //Close connection.
-            DatabaseClose.close(pstmt,conn);
+            DatabaseClose.close(conn,pstmt);
         }
         //Throw exceptions if any.
         if (exceptions.size() > 0)

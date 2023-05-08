@@ -107,7 +107,7 @@ public class BooksManageDao
             throw new CollectionException(exceptions);
         }
         //Close connection.
-        DatabaseClose.close(pstmt,conn);
+        DatabaseClose.close(conn,pstmt);
     }
     /**
      * Add Column if to database.
@@ -332,7 +332,7 @@ public class BooksManageDao
                 exceptions.add(e);
             }
         }
-        DatabaseClose.close(pstmt,conn,rs);
+        DatabaseClose.close(conn,pstmt,rs);
         if(exceptions.size()>0)
         {
             throw new CollectionException(exceptions);
@@ -342,9 +342,10 @@ public class BooksManageDao
 
     /**
      * Advanced search for a specific column and value.
+     * ArrayList: 0 is the Type, 1 is the Tittle. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn.
      * @param column The way to search.
      * @param value The value to search for.
-     * @return A map of books that match the search.
+     * @return A map of books that match the search. Integer is bookID, and ArrayList is the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     public Map<Integer,ArrayList<String>>search(String column,String value) throws CollectionException
@@ -381,10 +382,12 @@ public class BooksManageDao
                 while (rs.next())
                 {
                     ArrayList<String>bookList = new ArrayList<>();
+                    //Add the information of the book to the list.
                     for (int j=1;j<rs.getMetaData().getColumnCount();j++)
                     {
                         bookList.add(rs.getString(j+1));
                     }
+                    //Add the BookID to Map.
                     list.put(rs.getInt(1),bookList);
                 }
             }
@@ -401,7 +404,7 @@ public class BooksManageDao
         }
         finally
         {
-            DatabaseClose.close(pstmt,conn,rs);
+            DatabaseClose.close(conn,pstmt,rs);
         }
         if(exceptions.size()>0)
         {
