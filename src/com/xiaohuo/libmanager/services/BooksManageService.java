@@ -302,4 +302,52 @@ public class BooksManageService
         }
         return bookId;
     }
+
+    /**
+     * Delete book in the database according to their title
+     * @param title the title of the book the user want to delete
+     */
+    public void deleteBookByTitle(String title) throws CollectionException{
+        BooksManageDao dao = new BooksManageDao();
+        List<Throwable> exceptions = new ArrayList<>();
+        try
+        {
+            dao.delete(title);
+        }
+        catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    /**
+     * Delete book in the database according to its ID
+     * @param ID the title of the book the user want to delete
+     */
+    public void deleteBookByID(String ID) throws CollectionException{
+        BooksManageDao dao = new BooksManageDao();
+        List<Throwable> exceptions = new ArrayList<>();
+        try
+        {
+            dao.delete(ID);
+        }
+        catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    public void editBookTitle() throws CollectionException{}
+
+    public void editBookAuthor() throws CollectionException{}
+
+
 }
