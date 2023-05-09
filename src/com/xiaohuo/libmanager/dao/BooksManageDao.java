@@ -49,20 +49,19 @@ public class BooksManageDao
 
     /**
      * Delete book in the table
-     * @param bookID the ID of the book that the user want to delete
+     * @param deleteSql SQL for delete a book, a journal, or a newspaper
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public void delete(int bookID) throws CollectionException
+    public void delete(String deleteSql) throws CollectionException
     {
         conn = DatabaseConnect.connect();
 
         List<Throwable> exceptions = new ArrayList<>();
 
         try{
-            String sql = "DELETE FROM %s WHERE BookID=?";
-            sql = String.format(sql,BOOK_TABLE);
+            String sql = "DELETE FROM %s WHERE %s";
+            sql = String.format(sql,BOOK_TABLE,deleteSql);
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,bookID);
             int update = pstmt.executeUpdate();
             if(update>=1){
                 System.out.println("Delete success");
@@ -87,22 +86,21 @@ public class BooksManageDao
     /**
      *
      * @param bookID the ID of the book which the user wants to edit
-     * @param column the section of the book which the user wants to edit
+     * @param section the section of the book which the user wants to edit
      * @param changeContent the content that the user want to change
      * @throws CollectionException
      */
-    public void editBook(int bookID,String column,String changeContent) throws CollectionException
+    public void editBook(int bookID,String section,String changeContent) throws CollectionException
     {
         conn = DatabaseConnect.connect();
 
         List<Throwable> exceptions = new ArrayList<>();
 
         try{
-            String sql = "UPDATE %s SET %s=? WHERE BookID=?";
-            sql = String.format(sql,BOOK_TABLE,column);
+            String sql = "UPDATE %s SET %s=%s WHERE BookID=?";
+            sql = String.format(sql,BOOK_TABLE,section,changeContent);
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,changeContent);
-            pstmt.setInt(2,bookID);
+            pstmt.setInt(1,bookID);
             int update = pstmt.executeUpdate();
             if(update>=1){
                 System.out.println("Edit success");
@@ -185,7 +183,6 @@ public class BooksManageDao
         //Close connection.
         DatabaseClose.close(conn,pstmt);
     }
-
     /**
      * Add Column if to database when the column is not exist.
      * @param conn Connection
@@ -491,4 +488,6 @@ public class BooksManageDao
         }
         return list;
     }
+
+
 }
