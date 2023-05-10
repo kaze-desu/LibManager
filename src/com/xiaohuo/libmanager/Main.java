@@ -2,6 +2,7 @@ package com.xiaohuo.libmanager;
 
 import com.xiaohuo.libmanager.controller.BookSearchController;
 import com.xiaohuo.libmanager.exception.CollectionException;
+
 /**
  * Main class
  * @author xiaohuo(Wang Boyun)

@@ -8,6 +8,10 @@ gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812
 
 请参阅该教程：https://www.runoob.com/java/java-mysql-connect.html
 
+如果JDK版本在11以上需自行安装javaFX：https://gluonhq.com/products/javafx/
+
+请参阅该教程：https://blog.csdn.net/ooblack/article/details/116797407
+
 项目结构按照SpringMVC的结构进行设计，但并非为了使用SpringMVC，而是为了方便后期的扩展。
 # 项目结构
 

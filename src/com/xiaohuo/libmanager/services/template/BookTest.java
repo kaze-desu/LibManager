@@ -3,7 +3,7 @@ package com.xiaohuo.libmanager.services.template;
 import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.BooksManageService;
 import com.xiaohuo.libmanager.services.BaseBooks;
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 //import org.junit.Test;
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ class BookTest
      * A test class.
      * Nothing here.
      */
-    @Test
+    //@Test
     void getBookInfo() throws CollectionException
     {
 
