@@ -1,17 +1,16 @@
 package com.xiaohuo.libmanager.controller;
 
 import com.xiaohuo.libmanager.exception.CollectionException;
-import com.xiaohuo.libmanager.services.BooksManageService;
+import com.xiaohuo.libmanager.services.BooksManageServiceImpl;
 
 
-import javax.swing.text.Style;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class BookDeleteController {
     public void deleteBook() throws CollectionException
     {
-        BooksManageService service = new BooksManageService();
+        BooksManageServiceImpl service = new BooksManageServiceImpl();
         Map<Integer, ArrayList<String>> result;
         String name = "";
     }

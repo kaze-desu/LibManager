@@ -1,6 +1,6 @@
 package com.xiaohuo.libmanager.controller;
 
-import com.xiaohuo.libmanager.services.UserManagerService;
+import com.xiaohuo.libmanager.services.UserManagerServiceImpl;
 
 import java.util.Scanner;
 
@@ -12,7 +12,7 @@ public class UserRegisterController
 
     public void register()
     {
-        UserManagerService services = new UserManagerService();
+        UserManagerServiceImpl services = new UserManagerServiceImpl();
         String name;
         String password;
         while(true)
@@ -62,11 +62,11 @@ public class UserRegisterController
          String confirm = scanner.nextLine();
          if(!name.equals(confirm)&&password.equals(confirm))//e-library will not login
          {
-             for(int i = 0;i <= 5;i++)
+/*             for(int i = 0;i <= 5;i++)
              {
                  System.out.println("You have no times to sign in");
                  break;
-             }
+             }*/
 
          }
          else

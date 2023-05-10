@@ -5,7 +5,9 @@ import com.xiaohuo.libmanager.dao.UserManagerDao;
 /**
  * @author XU XIAO
  */
-public class UserManagerService
+
+//TODO Please use Interface to regulate your code.
+public class UserManagerServiceImpl
 {
 
     public void addUser(String name, String password)

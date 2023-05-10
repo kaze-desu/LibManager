@@ -4,13 +4,13 @@ import com.xiaohuo.libmanager.Init;
 import com.xiaohuo.libmanager.db.DatabaseClose;
 import com.xiaohuo.libmanager.db.DatabaseConnect;
 import com.xiaohuo.libmanager.exception.CollectionException;
+import com.xiaohuo.libmanager.services.status.Status;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * To sign the book status
@@ -49,7 +49,7 @@ public class BooksStatusDao
          * Location : The location of the book
          * Status : The status of the book, true means the book is available, false means the book is not available.
          */
-        String tableSql = "StatusID INT PRIMARY KEY AUTO_INCREMENT,BookId INT(255) NOT NULL , Location VARCHAR(255) NOT NULL, Status BOOLEAN NOT NULL";
+        String tableSql = "StatusID INT PRIMARY KEY AUTO_INCREMENT,BookID INT(255) NOT NULL , Location VARCHAR(255) NOT NULL, Status BOOLEAN NOT NULL";
         initTableDao.initTable(BOOK_TABLE,tableSql);
         if (exceptions.size() > 0)
         {
@@ -57,11 +57,11 @@ public class BooksStatusDao
         }
     }
 
-    public void addStatus(int bookId,String location,boolean status) throws CollectionException
+    public void addStatus(int bookId, String location, boolean status) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         boolean testMode = new Init().getTestMode();
-        String sql = "INSERT INTO %s (BookId,Location,Status) VALUES(?,?,?)";
+        String sql = "INSERT INTO %s (BookID,Location,Status) VALUES(?,?,?)";
         sql = String.format(sql,BOOK_TABLE);
         try
         {
@@ -84,5 +84,73 @@ public class BooksStatusDao
         {
             throw new CollectionException(exceptions);
         }
+    }
+
+    /**
+     * search the status by bookID
+     * @param bookId bookId
+     * @return ArrayList<Status> : 0 is the bookID, 1 is the location, 2 is the status.
+     * @throws CollectionException CollectionException
+     */
+    public Map<Integer,ArrayList<Status>> searchStatus(int bookId)throws CollectionException
+    {
+        List<Throwable>exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<Status>> list = new HashMap<>(1000);
+        try
+        {
+            conn = DatabaseConnect.connect();
+
+        }
+        catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            String sql = "SELECT * FROM %s WHERE BookID LIKE ?";
+            sql = String.format(sql,BOOK_TABLE);
+            pstmt = conn.prepareStatement(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            pstmt.setInt(1,bookId);
+            try
+            {
+                rs = pstmt.executeQuery();
+                while (rs.next())
+                {
+                    //Add the information of the book to the list.
+                    ArrayList<Status> statusList = new ArrayList<>();
+                    statusList.add(new Status(rs.getInt(1),rs.getString(3),rs.getBoolean(4)));
+                    //Add the BookID to Map.
+                    list.put(rs.getInt(1),statusList);
+                }
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        finally
+        {
+            DatabaseClose.close(conn,pstmt,rs);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return list;
     }
 }
