@@ -1,7 +1,7 @@
 package com.xiaohuo.libmanager.services.template;
 
 import com.xiaohuo.libmanager.exception.CollectionException;
-import com.xiaohuo.libmanager.services.BooksManageService;
+import com.xiaohuo.libmanager.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanager.services.BaseBooks;
 //import org.junit.jupiter.api.Test;
 //import org.junit.Test;
@@ -38,9 +38,9 @@ class BookTest
 
 
 
-        BooksManageService booksManageService = new BooksManageService();
-        booksManageService.add(books);
-        booksManageService.add(journals);
-        booksManageService.add(newspapers);
+        BooksManageServiceImpl booksManageServiceImpl = new BooksManageServiceImpl();
+        booksManageServiceImpl.add(books);
+        booksManageServiceImpl.add(journals);
+        booksManageServiceImpl.add(newspapers);
     }
 }

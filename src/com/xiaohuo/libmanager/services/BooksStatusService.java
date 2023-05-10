@@ -1,47 +1,25 @@
 package com.xiaohuo.libmanager.services;
 
-import com.xiaohuo.libmanager.dao.BooksStatusDao;
 import com.xiaohuo.libmanager.exception.CollectionException;
-import com.xiaohuo.libmanager.services.template.TypeList;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
- * Classify the book type and transfer the status to dao layer
- * @author xiaohuo
+ * @author Xiaohuo(Wang Boyun)
  */
-public class BooksStatusService
+public interface BooksStatusService
 {
+    void addBookStatus(String type, String identityCode, String location,boolean status) throws CollectionException;
+    boolean checkBookType(String type) throws CollectionException;
 
-    public void addBookStatus(String type, String identityCode, String location,boolean status) throws CollectionException
-    {
-        List<Throwable> exceptions = new ArrayList<>();
-        BooksStatusDao dao = new BooksStatusDao();
-        BooksManageService manageService = new BooksManageService();
-        if(!checkBookType(type))
-        {
-            exceptions.add(new Throwable("The book type is not exist!"));
-            throw new CollectionException(exceptions);
-        }
-        int bookId = manageService.getBookID(type,identityCode);
-        if(bookId == -1)
-        {
-            exceptions.add(new Throwable("The book is not exist!"));
-            throw new CollectionException(exceptions);
-        }
-        dao.addStatus(bookId,location,status);
-    }
-    public boolean checkBookType(String type) throws CollectionException
-    {
-        for (TypeList list:TypeList.values())
-        {
-            if (list.getType().equals(type))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    /**
+     * Search the book status by book type and identity code.
+     * Only return the book that is revert.
+     * Convert all the data to string and return it.
+     * @param type The book type.
+     * @param identityCode The identity code of the book.
+     * @return Integer is statusId, String is the location of the book.
+     * @throws CollectionException If the book is not exist, throw the exception.
+     */
+    Map<Integer,String> searchBookStatus(String type, String identityCode) throws CollectionException;
 }
-
