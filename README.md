@@ -1,5 +1,6 @@
 # LibManager
 A library manage system
+dev
 # 数据库
 gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812
 
