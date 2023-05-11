@@ -1,9 +1,8 @@
 package com.xiaohuo.libmanager.controller;
 
 import com.xiaohuo.libmanager.exception.CollectionException;
+import com.xiaohuo.libmanager.services.BooksManageServiceImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BookSearchControllerTest
 {
@@ -11,7 +10,7 @@ class BookSearchControllerTest
     @Test
     void search() throws CollectionException
     {
-        BookSearchController bookSearchController = new BookSearchController();
-        bookSearchController.search();
+        BooksManageServiceImpl service = new BooksManageServiceImpl();
+        System.out.println(service.search("tittle1"));
     }
 }

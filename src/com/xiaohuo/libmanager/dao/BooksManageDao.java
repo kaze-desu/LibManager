@@ -349,9 +349,17 @@ public class BooksManageDao
                             ArrayList<String>bookList = new ArrayList<>();
                             bookIdSet.add(rs.getInt(1));
                             //Add the information of the book to the list.
-                            for (int j=1;j<=columnsNum;j++)
+                            for (int j=1;j<columnsNum;j++)
                             {
-                                bookList.add(rs.getString(j+1));
+                                try
+                                {
+                                    bookList.add(rs.getString(j+1));
+                                }
+                                catch (SQLException e)
+                                {
+                                    e.printStackTrace();
+                                    exceptions.add(e);
+                                }
                             }
                             list.put(rs.getInt(1),bookList);
                         }

@@ -46,14 +46,14 @@ interface BooksManageService
 
     /**
      * Search the book by general search mod.
-     * @return A list of books filtered by tittle.
+     * @return a Map of books information. Integer: the BookID of the book. ArrayList: the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     Map<Integer, ArrayList<String>> search(String value) throws CollectionException;
 
     /**Search by type.
      * @param type The type of the book.
-     * @return A list of books filtered by type.
+     * @return a Map of books information. Integer: the BookID of the book. ArrayList: the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     Map<Integer, ArrayList<String>>searchByType(String type) throws CollectionException;
@@ -61,7 +61,7 @@ interface BooksManageService
     /**
      * Search by author.
      * @param author The author of the book.
-     * @return A list of books filtered by author.
+     * @return a Map of books information. Integer: the BookID of the book. ArrayList: the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     Map<Integer, ArrayList<String>>searchByAuthor(String author) throws CollectionException;
@@ -69,7 +69,7 @@ interface BooksManageService
     /**
      * Search by publisher.
      * @param publisher The publisher of the book.
-     * @return A list of books filtered by publisher.
+     * @return a Map of books information. Integer: the BookID of the book. ArrayList: the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     Map<Integer, ArrayList<String>>searchByPublisher(String publisher) throws CollectionException;
@@ -77,7 +77,7 @@ interface BooksManageService
     /**
      *  Search by category.
      * @param category The category of the book.
-     * @return A list of books filtered by category.
+     * @return a Map of books information. Integer: the BookID of the book. ArrayList: the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     Map<Integer, ArrayList<String>>searchByCategory(String category) throws CollectionException;
