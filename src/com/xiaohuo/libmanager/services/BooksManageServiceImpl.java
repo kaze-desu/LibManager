@@ -252,4 +252,25 @@ public class BooksManageServiceImpl implements BooksManageService
         }
         return bookId;
     }
+
+    @Override
+    public void deleteBook(ArrayList<String> book) throws CollectionException{
+        List<Throwable> exceptions = new ArrayList<>();
+        BooksManageDao dao = new BooksManageDao();
+        String code = book.get(4);
+        String type = book.get(3);
+        int ID = getBookId(type,code);
+        try
+        {
+            dao.delete(ID);
+        }
+        catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
 }
