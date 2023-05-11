@@ -306,37 +306,24 @@ public class BooksManageService
 
     /**
      * Delete book in the database according to their title
-     * @param title the title of the book the user want to delete
+     * @param book the book the user want to delete
      */
-    public void deleteBook(String title) throws CollectionException{
-        BooksManageDao dao = new BooksManageDao();
-        Map<Integer,ArrayList<String>>bookList;
+    public void deleteBook(ArrayList<String> book) throws CollectionException{
         List<Throwable> exceptions = new ArrayList<>();
-        bookList = dao.search(title);
-        if(bookList.size()!=0){
-            ArrayList<String> book;
-            if(bookList.size()==1){
-                book = bookList.get(0);
-            }
-            else {
-                // ask use to choose one book
-                int key;
-                book = bookList.get(key);
-            }
-            String code = book.get(4);
-            String type = book.get(3);
-            int ID = getBookID(type,code);
-            try {
-                dao.delete(ID);
-            }
-            catch (CollectionException e){
-                exceptions.add(e);
-            }
+        BooksManageDao dao = new BooksManageDao();
+        String code = book.get(4);
+        String type = book.get(3);
+        int ID = getBookID(type,code);
+        try
+        {
+            dao.delete(ID);
         }
-        else {
-            System.out.println("Book not found");
+        catch (CollectionException e)
+        {
+            exceptions.add(e);
         }
-        if(exceptions.size()>0){
+        if(exceptions.size()>0)
+        {
             throw new CollectionException(exceptions);
         }
     }
