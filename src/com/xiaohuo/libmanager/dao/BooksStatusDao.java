@@ -23,8 +23,6 @@ public class BooksStatusDao
     private ResultSet rs = null;
     //Table name should not include any capital letter.
     public static final String BOOK_TABLE = "books_status";
-    private final boolean init = false;
-
     /**
      * Initiate the table.
      * @throws CollectionException CollectionException
@@ -57,6 +55,13 @@ public class BooksStatusDao
         }
     }
 
+    /**
+     * Add the status of the book
+     * @param bookId bookId
+     * @param location location
+     * @param status revert or not.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
     public void addStatus(int bookId, String location, boolean status) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
@@ -90,22 +95,13 @@ public class BooksStatusDao
      * search the status by bookID
      * @param bookId bookId
      * @return ArrayList<Status> : 0 is the bookID, 1 is the location, 2 is the status.
-     * @throws CollectionException CollectionException
+     * @throws CollectionException Exception thrown when there is any error.
      */
     public Map<Integer,ArrayList<Status>> searchStatus(int bookId)throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
         Map<Integer,ArrayList<Status>> list = new HashMap<>(1000);
-        try
-        {
-            conn = DatabaseConnect.connect();
-
-        }
-        catch (CollectionException e)
-        {
-            e.printStackTrace();
-            exceptions.add(e);
-        }
+        conn = DatabaseConnect.connect();
         try
         {
             String sql = "SELECT * FROM %s WHERE BookID LIKE ?";
@@ -152,5 +148,124 @@ public class BooksStatusDao
             throw new CollectionException(exceptions);
         }
         return list;
+    }
+
+    /**
+     * Edit the status by statusID
+     * @param statusId statusId
+     * @param column the column that you want to search.
+     * @param value input the value that you want to change.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
+    public void editStatus(int statusId,String column,String value)throws CollectionException
+    {
+        List<Throwable>exceptions = new ArrayList<>();
+        conn = DatabaseConnect.connect();
+        boolean testMode = new Init().getTestMode();
+        String sql = "UPDATE %s SET %s = ? WHERE StatusID = ?";
+        sql = String.format(sql,BOOK_TABLE,column);
+        try
+        {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,value);
+            pstmt.setInt(2,statusId);
+            int update = pstmt.executeUpdate();
+            if (testMode)
+            {
+                System.out.println("update column:"+update);
+            }
+
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        finally
+        {
+            DatabaseClose.close(conn,pstmt);
+        }
+        if (exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    /**
+     * Edit the status by statusID
+     * @param statusId statusId
+     * @param column the column that you want to search.
+     * @param value input the value that you want to change.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
+    public void editStatus(int statusId,String column,Boolean value)throws CollectionException
+    {
+        List<Throwable>exceptions = new ArrayList<>();
+        conn = DatabaseConnect.connect();
+        boolean testMode = new Init().getTestMode();
+        String sql = "UPDATE %s SET %s = ? WHERE StatusID = ?";
+        sql = String.format(sql,BOOK_TABLE,column);
+        try
+        {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setBoolean(1,value);
+            pstmt.setInt(2,statusId);
+            int update = pstmt.executeUpdate();
+            if (testMode)
+            {
+                System.out.println("update column:"+update);
+            }
+
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        finally
+        {
+            DatabaseClose.close(conn,pstmt);
+        }
+        if (exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    /**
+     * Delete the status by statusID
+     * @param statusId statusId
+     * @throws CollectionException Exception thrown when there is any error.
+     */
+    public void deleteStatus(int statusId) throws CollectionException
+    {
+        List<Throwable>exceptions = new ArrayList<>();
+        conn = DatabaseConnect.connect();
+        boolean testMode = new Init().getTestMode();
+        String sql = "DELETE FROM %s WHERE StatusID = ?";
+        sql = String.format(sql,BOOK_TABLE);
+        try
+        {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1,statusId);
+            int update = pstmt.executeUpdate();
+            if (testMode)
+            {
+                System.out.println("delete column:"+update);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        finally
+        {
+            DatabaseClose.close(conn,pstmt);
+        }
+        if (exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
     }
 }

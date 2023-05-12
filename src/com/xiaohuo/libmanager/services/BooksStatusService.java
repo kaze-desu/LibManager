@@ -22,4 +22,33 @@ public interface BooksStatusService
      * @throws CollectionException If the book is not exist, throw the exception.
      */
     Map<Integer,String> searchBookStatus(String type, String identityCode) throws CollectionException;
+
+    /**
+     * Edit the location of the book.
+     * @param statusId The statusID of the book.
+     * @param location The location of the book.
+     * @throws CollectionException If the book is not exist, throw the exception.
+     */
+    void editBookLocation(int statusId,String location) throws CollectionException;
+
+    /**
+     * Change the status of the book to borrow.
+     * @param statusId The statusID of the book.
+     * @throws CollectionException If the book is not exist, throw the exception.
+     */
+    void borrowBook(int statusId) throws CollectionException;
+
+    /**
+     * Change the status of the book to revert.
+     * @param statusId The statusID of the book.
+     * @throws CollectionException If the book is not exist, throw the exception.
+     */
+    void revertBook(int statusId) throws CollectionException;
+
+    /**
+     * Delete the book status by statusId.
+     * @param statusId The statusID of the book.
+     * @throws CollectionException If the book is not exist, throw the exception.
+     */
+    void deleteBookStatus(int statusId) throws CollectionException;
 }

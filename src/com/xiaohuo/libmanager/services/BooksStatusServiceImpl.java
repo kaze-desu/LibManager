@@ -54,7 +54,6 @@ public class BooksStatusServiceImpl implements BooksStatusService
     @Override
     public Map<Integer,String> searchBookStatus(String type, String identityCode) throws CollectionException
     {
-        //TODO : Finish the search function
         List<Throwable> exceptions = new ArrayList<>();
         BooksStatusDao dao = new BooksStatusDao();
         BooksManageServiceImpl manageService = new BooksManageServiceImpl();
@@ -78,6 +77,34 @@ public class BooksStatusServiceImpl implements BooksStatusService
             throw new CollectionException(exceptions);
         }
         return statusList;
+    }
+
+    @Override
+    public void editBookLocation(int statusId, String location) throws CollectionException
+    {
+        BooksStatusDao dao = new BooksStatusDao();
+        String column = "Location";
+        dao.editStatus(statusId,column,location);
+    }
+    @Override
+    public void borrowBook(int statusId) throws CollectionException
+    {
+        BooksStatusDao dao = new BooksStatusDao();
+        String column = "Status";
+        dao.editStatus(statusId,column,false);
+    }
+    @Override
+    public void revertBook(int statusId) throws CollectionException
+    {
+        BooksStatusDao dao = new BooksStatusDao();
+        String column = "Status";
+        dao.editStatus(statusId,column,true);
+    }
+    @Override
+    public void deleteBookStatus(int statusId) throws CollectionException
+    {
+        BooksStatusDao dao = new BooksStatusDao();
+        dao.deleteStatus(statusId);
     }
 }
 
