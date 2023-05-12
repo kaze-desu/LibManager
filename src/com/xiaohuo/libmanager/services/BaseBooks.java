@@ -14,6 +14,14 @@ public abstract class BaseBooks
     protected String author;
     protected String publisher;
     protected String category;
+
+    /**
+     * The constructor of the BaseBooks.
+     * @param tittle The tittle of the book.
+     * @param author The author of the book.
+     * @param publisher The publisher of the book.
+     * @param category The category of the book.
+     */
     public BaseBooks(String tittle, String author, String publisher, String category)
     {
         this.tittle = tittle;
@@ -22,6 +30,10 @@ public abstract class BaseBooks
         this.category = category;
     }
 
+    /**
+     * Set the type(For example : "Newspaper") of the book.
+     * @param type The type of the book.
+     */
     public void setType(String type)
     {
         this.type = type;

@@ -1,7 +1,7 @@
 package com.xiaohuo.libmanager.controller;
 
 import com.xiaohuo.libmanager.exception.CollectionException;
-import com.xiaohuo.libmanager.services.BooksManageService;
+import com.xiaohuo.libmanager.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanager.services.template.TypeList;
 
 import java.util.*;
@@ -96,7 +96,7 @@ public class BookSearchController
     }
     public int searchByType(String type) throws CollectionException
     {
-        BooksManageService service = new BooksManageService();
+        BooksManageServiceImpl service = new BooksManageServiceImpl();
         Map<Integer, ArrayList<String>> result;
         result = service.searchByType(type);
         int count = 0;

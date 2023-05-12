@@ -89,7 +89,7 @@ public class BooksManageDao
      * @param bookSql SQL for adding books.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public void add(ArrayList<String> columnList, String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
+    public void addBook(ArrayList<String> columnList, String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
     {
         //Check the test mode flag.
         boolean testMode = new Init().getTestMode();
@@ -134,10 +134,10 @@ public class BooksManageDao
         //If not, add the column.
         if(columnNullList.size()>0)
         {
-            addColumn(conn,columnNullList);
+            addBookColumn(conn,columnNullList);
         }
         //Add books to the table.
-        addBooks(conn,bookSql,bookList);
+        addBookProcession(conn,bookSql,bookList);
         if (exceptions.size() > 0)
         {
             throw new CollectionException(exceptions);
@@ -146,12 +146,12 @@ public class BooksManageDao
         DatabaseClose.close(conn,pstmt);
     }
     /**
-     * Add Column if to database.
+     * Add Column if to database when the column is not exist.
      * @param conn Connection
      * @param columnList List of columns.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    private void addColumn(Connection conn,ArrayList<String> columnList) throws CollectionException
+    private void addBookColumn(Connection conn, ArrayList<String> columnList) throws CollectionException
     {
         ArrayList<Throwable>exceptions = new ArrayList<>();
         boolean testMode = new Init().getTestMode();
@@ -209,7 +209,7 @@ public class BooksManageDao
      * @param bookList List of books.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    private void addBooks(Connection conn,String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
+    private void addBookProcession(Connection conn, String bookSql, Map<Integer,ArrayList<String>> bookList) throws CollectionException
     {
         boolean testMode = new Init().getTestMode();
         List<Throwable> exceptions = new ArrayList<>();
@@ -236,7 +236,8 @@ public class BooksManageDao
                     StringBuilder sql = new StringBuilder(bookSql + "(");
                     for (String information:bookList.get(key))
                     {
-                        sql.append("'").append(information).append("'").append(",");
+                        sql.append("'").append(information)
+                                .append("'").append(",");
                         if(bookList.get(key).indexOf(information)==bookList.get(key).size()-1)
                         {
                             sql = new StringBuilder(sql.substring(0, sql.length() - 1));
@@ -283,7 +284,7 @@ public class BooksManageDao
      * @throws CollectionException Exception thrown when there is any error.
      */
 
-    public Map<Integer,ArrayList<String>>search(String value) throws CollectionException
+    public Map<Integer,ArrayList<String>> searchBook(String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
         //The set is used to store the bookID to avoid duplicate.
@@ -304,7 +305,8 @@ public class BooksManageDao
         try
         {
             //Get the columns number.(Limit 1 to avoid extra time)
-            String sql = "SELECT * FROM "+BOOK_TABLE+" LIMIT 1";
+            String sql = "SELECT * FROM %s LIMIT 1";
+            sql = String.format(sql,BOOK_TABLE);
             pstmt = conn.prepareStatement(sql);
         }
         catch (SQLException e)
@@ -347,9 +349,17 @@ public class BooksManageDao
                             ArrayList<String>bookList = new ArrayList<>();
                             bookIdSet.add(rs.getInt(1));
                             //Add the information of the book to the list.
-                            for (int j=1;j<=columnsNum;j++)
+                            for (int j=1;j<columnsNum;j++)
                             {
-                                bookList.add(rs.getString(j+1));
+                                try
+                                {
+                                    bookList.add(rs.getString(j+1));
+                                }
+                                catch (SQLException e)
+                                {
+                                    e.printStackTrace();
+                                    exceptions.add(e);
+                                }
                             }
                             list.put(rs.getInt(1),bookList);
                         }
@@ -384,7 +394,7 @@ public class BooksManageDao
      * @return A map of books that match the search. Integer is bookID, and ArrayList is the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public Map<Integer,ArrayList<String>>search(String column,String value) throws CollectionException
+    public Map<Integer,ArrayList<String>> searchBook(String column, String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
