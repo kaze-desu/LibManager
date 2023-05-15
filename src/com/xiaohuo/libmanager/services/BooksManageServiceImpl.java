@@ -62,6 +62,19 @@ public class BooksManageServiceImpl implements BooksManageService
         {
             //Cast the object to Book, because we need the Isbn which only in book class.
             Book book = (Book) baseBooks;
+            try
+            {
+                //Check if the Isbn is exists.
+                if(getBookId(TypeList.BOOK.getType(), book.getIsbn())!=-1)
+                {
+                    //TODO 考虑如何传递给Controller
+                    System.out.println("The book is already exist!");
+                    continue;
+                }
+            }
+            catch(CollectionException ignored)
+            {
+            }
             ArrayList<String> bookList = book.getBookInfo();
             list.put(booksInfo.indexOf(book),bookList);
         }
@@ -84,6 +97,18 @@ public class BooksManageServiceImpl implements BooksManageService
         for (BaseBooks baseBooks : journalInfo)
         {
             Journal journal = (Journal) baseBooks;
+            try
+            {
+                //Check if the Isbn is exists.
+                if(getBookId(TypeList.JOURNAL.getType(), journal.getIssn())!=-1)
+                {
+                    System.out.println("The book is already exist!");
+                    continue;
+                }
+            }
+            catch(CollectionException ignored)
+            {
+            }
             ArrayList<String> bookList = journal.getBookInfo();
             list.put(journalInfo.indexOf(journal),bookList);
         }
@@ -110,6 +135,18 @@ public class BooksManageServiceImpl implements BooksManageService
         {
             Newspaper newspaper = (Newspaper) baseBooks;
             ArrayList<String> newspaperList = newspaper.getBookInfo();
+            try
+            {
+                //Check if the Isbn is exists.
+                if(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn())!=-1)
+                {
+                    System.out.println("The book is already exist!");
+                    continue;
+                }
+            }
+            catch(CollectionException ignored)
+            {
+            }
             list.put(newspaperInfo.indexOf(newspaper),newspaperList);
         }
         //Call the add method.

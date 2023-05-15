@@ -434,7 +434,10 @@ public class BooksManageDao
                     //Add the information of the book to the list.
                     for (int j=1;j<rs.getMetaData().getColumnCount();j++)
                     {
-                        bookList.add(rs.getString(j+1));
+                        if(rs.getString(j+1)!=null)
+                        {
+                            bookList.add(rs.getString(j+1));
+                        }
                     }
                     //Add the BookID to Map.
                     list.put(rs.getInt(1),bookList);
