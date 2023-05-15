@@ -63,6 +63,19 @@ public class BooksManageServiceImpl implements BooksManageService
         {
             //Cast the object to Book, because we need the Isbn which only in book class.
             Book book = (Book) baseBooks;
+            try
+            {
+                //Check if the Isbn is exists.
+                if(getBookId(TypeList.BOOK.getType(), book.getIsbn())!=-1)
+                {
+                    //TODO 考虑如何传递给Controller
+                    System.out.println("The book is already exist!");
+                    continue;
+                }
+            }
+            catch(CollectionException ignored)
+            {
+            }
             ArrayList<String> bookList = book.getBookInfo();
             list.put(booksInfo.indexOf(book),bookList);
         }
@@ -85,6 +98,18 @@ public class BooksManageServiceImpl implements BooksManageService
         for (BaseBooks baseBooks : journalInfo)
         {
             Journal journal = (Journal) baseBooks;
+            try
+            {
+                //Check if the Isbn is exists.
+                if(getBookId(TypeList.JOURNAL.getType(), journal.getIssn())!=-1)
+                {
+                    System.out.println("The book is already exist!");
+                    continue;
+                }
+            }
+            catch(CollectionException ignored)
+            {
+            }
             ArrayList<String> bookList = journal.getBookInfo();
             list.put(journalInfo.indexOf(journal),bookList);
         }
@@ -111,6 +136,18 @@ public class BooksManageServiceImpl implements BooksManageService
         {
             Newspaper newspaper = (Newspaper) baseBooks;
             ArrayList<String> newspaperList = newspaper.getBookInfo();
+            try
+            {
+                //Check if the Isbn is exists.
+                if(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn())!=-1)
+                {
+                    System.out.println("The book is already exist!");
+                    continue;
+                }
+            }
+            catch(CollectionException ignored)
+            {
+            }
             list.put(newspaperInfo.indexOf(newspaper),newspaperList);
         }
         //Call the add method.
@@ -257,16 +294,15 @@ public class BooksManageServiceImpl implements BooksManageService
     /**
      * If the user don't know the ISBN OR ISSN of the book they want to delete, this method will search the
      * book first and return a list contain all the ISSN or ISBN of the target book
-     * @param title
+     * @param title the title of the book
      * @return a list contain all the ISSN or ISBN of the target book
-     * @throws CollectionException
+     * @throws CollectionException if the book is not exist
      */
     @Override
     public ArrayList<String> getBookCodeListBySearchTitle(String title) throws CollectionException
     {
         ArrayList<String> codeList = new ArrayList<>();
         Map<Integer, ArrayList<String>> result;
-        BooksManageDao dao = new BooksManageDao();
         result = search(title);
 
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet())
