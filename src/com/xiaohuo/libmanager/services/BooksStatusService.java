@@ -2,6 +2,7 @@ package com.xiaohuo.libmanager.services;
 
 import com.xiaohuo.libmanager.exception.CollectionException;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -45,7 +46,15 @@ public interface BooksStatusService
      * @return Integer is statusId, String is the location of the book.
      * @throws CollectionException If the book is not exist, throw the exception.
      */
+
     Map<Integer,String> searchAllBookStatus(String type, String identityCode) throws CollectionException;
+
+    /**
+     * Get all the statusId;
+     * @param list The map of statusId and location.
+     * @return The list of statusId.
+     */
+    ArrayList<Integer> getStatusId(Map<Integer,String>list);
     /**
      * Edit the location of the book.
      * @param statusId The statusID of the book.

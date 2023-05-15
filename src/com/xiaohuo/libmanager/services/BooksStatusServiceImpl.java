@@ -105,6 +105,17 @@ public class BooksStatusServiceImpl implements BooksStatusService
     }
 
     @Override
+    public ArrayList<Integer> getStatusId(Map<Integer, String> list)
+    {
+        ArrayList<Integer>statusIdList = new ArrayList<>();
+        for (Map.Entry<Integer,String> entry:list.entrySet())
+        {
+            statusIdList.add(entry.getKey());
+        }
+        return statusIdList;
+    }
+
+    @Override
     public void editBookLocation(int statusId, String location) throws CollectionException
     {
         BooksStatusDao dao = new BooksStatusDao();
