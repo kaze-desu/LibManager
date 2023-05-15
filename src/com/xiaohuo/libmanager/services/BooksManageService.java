@@ -91,4 +91,8 @@ interface BooksManageService
      * @throws CollectionException If the book is not exist, throw the exception.
      */
     int getBookId(String identityType, String identityCode) throws CollectionException;
+
+    ArrayList<String> deleteBookBySearchTitle(String title) throws CollectionException;
+
+    void deleteBookByIdentityCode(String type,String code) throws CollectionException;
 }

@@ -5,6 +5,8 @@ import com.xiaohuo.libmanager.db.DatabaseClose;
 import com.xiaohuo.libmanager.db.DatabaseConnect;
 import com.xiaohuo.libmanager.exception.CollectionException;
 
+import java.net.IDN;
+import java.security.spec.PSSParameterSpec;
 import java.sql.*;
 import java.util.*;
 
@@ -49,19 +51,20 @@ public class BooksManageDao
 
     /**
      * Delete book in the table
-     * @param deleteSql SQL for delete a book, a journal, or a newspaper
+     * @param ID the ID of the book that the user want to delete in the table
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public void delete(String deleteSql) throws CollectionException
+    public void delete(int ID) throws CollectionException
     {
         conn = DatabaseConnect.connect();
 
         List<Throwable> exceptions = new ArrayList<>();
 
         try{
-            String sql = "DELETE FROM %s WHERE %s";
-            sql = String.format(sql,BOOK_TABLE,deleteSql);
+            String sql = "DELETE FROM ? WHERE BookID=?";
             pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,BOOK_TABLE);
+            pstmt.setInt(2, ID);
             int update = pstmt.executeUpdate();
             if(update>=1){
                 System.out.println("Delete success");
