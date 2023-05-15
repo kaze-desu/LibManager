@@ -87,6 +87,46 @@ public class BooksManageDao
     }
 
     /**
+     *
+     * @param bookID the ID of the book which the user wants to edit
+     * @param column the section of the book which the user wants to edit
+     * @param changeContent the content that the user want to change
+     * @throws CollectionException
+     */
+    public void editBook(int bookID,String column,String changeContent) throws CollectionException
+    {
+        conn = DatabaseConnect.connect();
+
+        List<Throwable> exceptions = new ArrayList<>();
+
+        try{
+            String sql = "UPDATE %s SET %s=? WHERE BookID=?";
+            sql = String.format(sql,BOOK_TABLE,column);
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,changeContent);
+            pstmt.setInt(2,bookID);
+            int update = pstmt.executeUpdate();
+            if(update>=1){
+                System.out.println("Edit success");
+            }
+            else{
+                System.out.println("Edit fail");
+            }
+        }
+        catch (SQLException e){
+            exceptions.add(e);
+        }
+        finally {
+            DatabaseClose.close(conn,pstmt);
+        }
+        if(exceptions.size() > 0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
+
+    /**
      * Add books to database in general.
      * @param columnList List of columns.
      * @param bookSql SQL for adding books.

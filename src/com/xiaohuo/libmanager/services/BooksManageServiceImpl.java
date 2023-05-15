@@ -262,7 +262,7 @@ public class BooksManageServiceImpl implements BooksManageService
      * @throws CollectionException
      */
     @Override
-    public ArrayList<String> deleteBookBySearchTitle(String title) throws CollectionException
+    public ArrayList<String> getBookCodeListBySearchTitle(String title) throws CollectionException
     {
         ArrayList<String> codeList = new ArrayList<>();
         Map<Integer, ArrayList<String>> result;
@@ -297,6 +297,25 @@ public class BooksManageServiceImpl implements BooksManageService
             exceptions.add(e);
         }
         if(exceptions.size()>0){
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    @Override
+    public void editBookInformation(String column,String targetContent,String type,String code) throws CollectionException
+    {
+        BooksManageDao dao = new BooksManageDao();
+        List<Throwable> exceptions = new ArrayList<>();
+
+        try {
+            int ID = getBookId(type, code);
+            dao.editBook(ID,column,targetContent);
+        }catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if (exceptions.size()>0)
+        {
             throw new CollectionException(exceptions);
         }
     }
