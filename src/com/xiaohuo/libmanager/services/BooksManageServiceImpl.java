@@ -2,6 +2,7 @@ package com.xiaohuo.libmanager.services;
 
 
 import com.xiaohuo.libmanager.dao.BooksManageDao;
+import com.xiaohuo.libmanager.dao.BooksStatusDao;
 import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.template.Book;
 import com.xiaohuo.libmanager.services.template.Journal;
@@ -277,15 +278,20 @@ public class BooksManageServiceImpl implements BooksManageService
     }
 
     @Override
-    public void deleteBookByIdentityCode(String type,String code) throws CollectionException
+    public void deleteBookByIdentityCode(String type,String code, ArrayList<Integer> statusID) throws CollectionException
     {
-        BooksManageDao dao = new BooksManageDao();
+        BooksManageDao daoM = new BooksManageDao();
+        BooksStatusDao daoS = new BooksStatusDao();
         List<Throwable> exceptions = new ArrayList<>();
 
         try
         {
             int bookID = getBookId(type,code);
-            dao.delete(bookID);
+            daoM.delete(bookID);
+            for(int ID: statusID)
+            {
+                daoS.deleteStatus(ID);
+            }
         }catch (CollectionException e)
         {
             exceptions.add(e);

@@ -94,5 +94,5 @@ interface BooksManageService
 
     ArrayList<String> deleteBookBySearchTitle(String title) throws CollectionException;
 
-    void deleteBookByIdentityCode(String type,String code) throws CollectionException;
+    void deleteBookByIdentityCode(String type,String code, ArrayList<Integer> statusID) throws CollectionException;
 }
