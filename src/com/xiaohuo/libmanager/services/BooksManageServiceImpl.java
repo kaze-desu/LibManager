@@ -293,16 +293,15 @@ public class BooksManageServiceImpl implements BooksManageService
     /**
      * If the user don't know the ISBN OR ISSN of the book they want to delete, this method will search the
      * book first and return a list contain all the ISSN or ISBN of the target book
-     * @param title
+     * @param title the title of the book
      * @return a list contain all the ISSN or ISBN of the target book
-     * @throws CollectionException
+     * @throws CollectionException if the book is not exist
      */
     @Override
     public ArrayList<String> deleteBookBySearchTitle(String title) throws CollectionException
     {
         ArrayList<String> codeList = new ArrayList<>();
         Map<Integer, ArrayList<String>> result;
-        BooksManageDao dao = new BooksManageDao();
         result = search(title);
 
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet())
