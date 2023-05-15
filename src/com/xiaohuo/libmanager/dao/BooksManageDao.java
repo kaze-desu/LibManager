@@ -354,7 +354,10 @@ public class BooksManageDao
                             {
                                 try
                                 {
-                                    bookList.add(rs.getString(j+1));
+                                    if(rs.getString(j+1)!=null)
+                                    {
+                                        bookList.add(rs.getString(j+1));
+                                    }
                                 }
                                 catch (SQLException e)
                                 {
