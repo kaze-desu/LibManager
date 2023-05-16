@@ -92,7 +92,7 @@ interface BooksManageService
      */
     int getBookId(String identityType, String identityCode) throws CollectionException;
 
-    ArrayList<String> getBookCodeListBySearchTitle(String title) throws CollectionException;
+    ArrayList<String> getBookByTitleAndType(String title, String type)  throws CollectionException;
 
     void deleteBookByIdentityCode(String type,String code, ArrayList<Integer> statusID) throws CollectionException;
 

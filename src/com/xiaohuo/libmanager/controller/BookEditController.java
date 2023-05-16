@@ -15,9 +15,8 @@ public class BookEditController
         BooksManageServiceImpl service = new BooksManageServiceImpl();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("What type of book you want to edit: ");
+        System.out.print("What type of book you want to edit: ");
         String type = scanner.nextLine();
-        type.toLowerCase(Locale.ROOT);
 
         while (!checkType(type)){
             System.out.println("Type not exist, please enter again");
@@ -33,30 +32,20 @@ public class BookEditController
         System.out.print("Enter 0 if you know the book ISBN or ISSN, other wise enter 1: ");
         int choice;
         choice = scanner.nextInt();
+        scanner.nextLine();
 
         if(choice==0)
         {
-            System.out.println("Enter ISBN or ISSN code: ");
-            String code = scanner.toString();
+            System.out.print("Enter ISBN or ISSN code: ");
+            String code = scanner.nextLine();
             service.editBookInformation(column,content,type,code);
         }
         else if(choice==1)
         {
             System.out.print("Enter the book title: ");
             String title = scanner.nextLine();
-
-            ArrayList<String> codeList = service.getBookCodeListBySearchTitle(title);
-            int numCode = 0;
-            for(String code: codeList)
-            {
-                System.out.println("Num "+numCode+" : "+code);
-                numCode++;
-            }
-
-            System.out.print("The number of the code you want to edit is number: ");
-            numCode = scanner.nextInt();
-
-            service.editBookInformation(column,content,type, codeList.get(numCode));
+            ArrayList<String> book = service.getBookByTitleAndType(title,type);
+            service.editBookInformation(column,content,type, book.get(6));
         }
     }
 
@@ -69,7 +58,7 @@ public class BookEditController
     {
         for(TypeList typeList: TypeList.values())
         {
-            if(typeList.getType().toLowerCase(Locale.ROOT)==type.toLowerCase(Locale.ROOT))
+            if(typeList.getType().toLowerCase(Locale.ROOT).equals(type.toLowerCase(Locale.ROOT)))
             {
                 return true;
             }

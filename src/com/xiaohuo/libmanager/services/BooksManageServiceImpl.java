@@ -299,18 +299,21 @@ public class BooksManageServiceImpl implements BooksManageService
      * @throws CollectionException if the book is not exist
      */
     @Override
-    public ArrayList<String> getBookCodeListBySearchTitle(String title) throws CollectionException
+    public ArrayList<String> getBookByTitleAndType(String title, String type) throws CollectionException
     {
-        ArrayList<String> codeList = new ArrayList<>();
+        ArrayList<String> book = new ArrayList<>();
         Map<Integer, ArrayList<String>> result;
         result = search(title);
 
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet())
         {
             ArrayList<String> bookInfo = entry.getValue();
-            codeList.add(bookInfo.get(5));
+            if(bookInfo.get(0).equals(type))
+            {
+                return bookInfo;
+            }
         }
-        return codeList;
+        return book;
     }
 
     @Override
@@ -323,10 +326,14 @@ public class BooksManageServiceImpl implements BooksManageService
         try
         {
             int bookID = getBookId(type,code);
+            System.out.print("the id is: "+bookID);
             daoM.delete(bookID);
-            for(int ID: statusID)
+            if(statusID!=null)
             {
-                daoS.deleteStatus(ID);
+                for(int ID: statusID)
+                {
+                    daoS.deleteStatus(ID);
+                }
             }
         }catch (CollectionException e)
         {
