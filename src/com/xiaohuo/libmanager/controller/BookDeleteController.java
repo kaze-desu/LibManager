@@ -2,12 +2,11 @@ package com.xiaohuo.libmanager.controller;
 
 import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.BooksManageServiceImpl;
+import com.xiaohuo.libmanager.services.BooksStatusServiceImpl;
 import com.xiaohuo.libmanager.services.template.TypeList;
 
 
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Scanner;
 
 public class BookDeleteController {
@@ -22,11 +21,11 @@ public class BookDeleteController {
      */
     public void deleteBook() throws CollectionException
     {
-        BooksManageServiceImpl service = new BooksManageServiceImpl();
-        System.out.println("What type of book you want to delete: ");
+        BooksManageServiceImpl serviceM = new BooksManageServiceImpl();
+        BooksStatusServiceImpl serviceS = new BooksStatusServiceImpl();
+        System.out.print("What type of book you want to delete: ");
         Scanner scanner = new Scanner(System.in);
         String type = scanner.nextLine();
-        type.toLowerCase(Locale.ROOT);
 
         while (!checkType(type)){
             System.out.println("Type not exist, please enter again");
@@ -34,31 +33,26 @@ public class BookDeleteController {
         }
 
         int choice;
+        ArrayList<Integer> statusID;
         System.out.print("Enter 0 if you know the book ISBN or ISSN, other wise enter 1: ");
         choice = scanner.nextInt();
+        scanner.nextLine();
         if(choice==0)
         {
             System.out.println("Enter ISBN or ISSN code: ");
-            String code = scanner.toString();
-            service.deleteBookByIdentityCode(type,code);
+            String code = scanner.nextLine();
+            statusID = serviceS.getStatusId(serviceS.searchAllBookStatus(type,code));
+            serviceM.deleteBookByIdentityCode(type,code,statusID);
         }
         else if(choice==1)
         {
             System.out.print("Enter the book title: ");
             String title = scanner.nextLine();
-            ArrayList<String> codeList = service.deleteBookBySearchTitle(title);
-            int numCode = 0;
-            for(String code: codeList)
-            {
-                System.out.println("Num "+numCode+" : "+code);
-                numCode++;
-            }
-            System.out.print("The number of the code you want to delete is number: ");
-            numCode = scanner.nextInt();
-            service.deleteBookByIdentityCode(type,codeList.get(numCode));
+            ArrayList<String> book = serviceM.getBookByTitleAndType(title,type);
+            statusID = serviceS.getStatusId(serviceS.searchAllBookStatus(type,book.get(4)));
+            serviceM.deleteBookByIdentityCode(type,book.get(6),statusID);
         }
     }
-
     /**
      * Check is the user input type in the TypeList
      * @param type
@@ -68,7 +62,8 @@ public class BookDeleteController {
     {
         for(TypeList typeList: TypeList.values())
         {
-            if(typeList.getType().toLowerCase(Locale.ROOT)==type.toLowerCase(Locale.ROOT))
+            System.out.println(typeList.getType());
+            if(typeList.getType().equals(type))
             {
                 return true;
             }
