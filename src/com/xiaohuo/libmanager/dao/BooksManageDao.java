@@ -49,19 +49,20 @@ public class BooksManageDao
 
     /**
      * Delete book in the table
-     * @param deleteSql SQL for delete a book, a journal, or a newspaper
+     * @param ID the ID of the book that the user want to delete in the table
      * @throws CollectionException Exception thrown when there is any error.
      */
-    public void delete(String deleteSql) throws CollectionException
+    public void delete(int ID) throws CollectionException
     {
         conn = DatabaseConnect.connect();
 
         List<Throwable> exceptions = new ArrayList<>();
 
         try{
-            String sql = "DELETE FROM %s WHERE %s";
-            sql = String.format(sql,BOOK_TABLE,deleteSql);
+            String sql = "DELETE FROM ? WHERE BookID=?";
             pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,BOOK_TABLE);
+            pstmt.setInt(2, ID);
             int update = pstmt.executeUpdate();
             if(update>=1){
                 System.out.println("Delete success");
@@ -353,7 +354,10 @@ public class BooksManageDao
                             {
                                 try
                                 {
-                                    bookList.add(rs.getString(j+1));
+                                    if(rs.getString(j+1)!=null)
+                                    {
+                                        bookList.add(rs.getString(j+1));
+                                    }
                                 }
                                 catch (SQLException e)
                                 {
@@ -431,7 +435,10 @@ public class BooksManageDao
                     //Add the information of the book to the list.
                     for (int j=1;j<rs.getMetaData().getColumnCount();j++)
                     {
-                        bookList.add(rs.getString(j+1));
+                        if(rs.getString(j+1)!=null)
+                        {
+                            bookList.add(rs.getString(j+1));
+                        }
                     }
                     //Add the BookID to Map.
                     list.put(rs.getInt(1),bookList);

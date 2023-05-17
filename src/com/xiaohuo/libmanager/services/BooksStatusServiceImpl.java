@@ -80,6 +80,42 @@ public class BooksStatusServiceImpl implements BooksStatusService
     }
 
     @Override
+    public Map<Integer, String> searchAllBookStatus(String type, String identityCode) throws CollectionException
+    {
+        List<Throwable> exceptions = new ArrayList<>();
+        BooksStatusDao dao = new BooksStatusDao();
+        BooksManageServiceImpl manageService = new BooksManageServiceImpl();
+        int bookId = manageService.getBookId(type,identityCode);
+        Map<Integer,String> statusList = new HashMap<>();
+        if(checkBookType(type))
+        {
+            Map<Integer,ArrayList<Status>> statusRawList = dao.searchStatus(bookId);
+            for(int statusId : statusRawList.keySet())
+            {
+                statusList.put(statusId,statusRawList.get(statusId).get(0).getLocation());
+
+            }
+        }
+        else
+        {
+            exceptions.add(new Throwable("The book type is not exist!"));
+            throw new CollectionException(exceptions);
+        }
+        return statusList;
+    }
+
+    @Override
+    public ArrayList<Integer> getStatusId(Map<Integer, String> list)
+    {
+        ArrayList<Integer>statusIdList = new ArrayList<>();
+        for (Map.Entry<Integer,String> entry:list.entrySet())
+        {
+            statusIdList.add(entry.getKey());
+        }
+        return statusIdList;
+    }
+
+    @Override
     public void editBookLocation(int statusId, String location) throws CollectionException
     {
         BooksStatusDao dao = new BooksStatusDao();
