@@ -59,12 +59,12 @@ public class BooksManageDao
         List<Throwable> exceptions = new ArrayList<>();
 
         try{
-            String sql = "DELETE FROM ? WHERE BookID=?";
+            String sql = "DELETE FROM %s WHERE BookID=?";
+            sql = String.format(sql,BOOK_TABLE);
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,BOOK_TABLE);
-            pstmt.setInt(2, ID);
+            pstmt.setInt(1, ID);
             int update = pstmt.executeUpdate();
-            if(update>=1){
+            if(update>0){
                 System.out.println("Delete success");
             }
             else{
@@ -83,6 +83,52 @@ public class BooksManageDao
             throw new CollectionException(exceptions);
         }
     }
+
+    /**
+     *
+     * @param bookID the ID of the book which the user wants to edit
+     * @param column the section of the book which the user wants to edit
+     * @param changeContent the content that the user want to change
+     * @throws CollectionException
+     */
+    public void editBook(int bookID,String column,String changeContent) throws CollectionException
+    {
+        List<Throwable> exceptions = new ArrayList<>();
+
+        try {
+            conn = DatabaseConnect.connect();
+        }catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+
+        try{
+            String sql = "UPDATE %s SET %s=? WHERE BookID=?";
+            sql = String.format(sql,BOOK_TABLE,column);
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,changeContent);
+            pstmt.setInt(2,bookID);
+            int update = pstmt.executeUpdate();
+            if(update>=1){
+                System.out.println("Edit success");
+            }
+            else{
+                System.out.println("Edit fail");
+            }
+        }
+        catch (SQLException e){
+            exceptions.add(e);
+        }
+        finally {
+            DatabaseClose.close(conn,pstmt);
+        }
+        if(exceptions.size() > 0)
+        {
+            throw new CollectionException(exceptions);
+        }
+    }
+
 
     /**
      * Add books to database in general.

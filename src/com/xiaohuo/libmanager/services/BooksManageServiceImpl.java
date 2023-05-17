@@ -2,6 +2,7 @@ package com.xiaohuo.libmanager.services;
 
 
 import com.xiaohuo.libmanager.dao.BooksManageDao;
+import com.xiaohuo.libmanager.dao.BooksStatusDao;
 import com.xiaohuo.libmanager.exception.CollectionException;
 import com.xiaohuo.libmanager.services.template.Book;
 import com.xiaohuo.libmanager.services.template.Journal;
@@ -298,35 +299,66 @@ public class BooksManageServiceImpl implements BooksManageService
      * @throws CollectionException if the book is not exist
      */
     @Override
-    public ArrayList<String> deleteBookBySearchTitle(String title) throws CollectionException
+    public ArrayList<String> getBookByTitleAndType(String title, String type) throws CollectionException
     {
-        ArrayList<String> codeList = new ArrayList<>();
+        ArrayList<String> book = new ArrayList<>();
         Map<Integer, ArrayList<String>> result;
         result = search(title);
 
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet())
         {
             ArrayList<String> bookInfo = entry.getValue();
-            codeList.add(bookInfo.get(5));
+            if(bookInfo.get(0).equals(type))
+            {
+                return bookInfo;
+            }
         }
-        return codeList;
+        return book;
     }
 
     @Override
-    public void deleteBookByIdentityCode(String type,String code) throws CollectionException
+    public void deleteBookByIdentityCode(String type,String code, ArrayList<Integer> statusID) throws CollectionException
     {
-        BooksManageDao dao = new BooksManageDao();
+        BooksManageDao daoM = new BooksManageDao();
+        BooksStatusDao daoS = new BooksStatusDao();
         List<Throwable> exceptions = new ArrayList<>();
 
         try
         {
             int bookID = getBookId(type,code);
-            dao.delete(bookID);
+            System.out.print("the id is: "+bookID);
+            daoM.delete(bookID);
+            if(statusID!=null)
+            {
+                for(int ID: statusID)
+                {
+                    daoS.deleteStatus(ID);
+                }
+            }
         }catch (CollectionException e)
         {
             exceptions.add(e);
         }
         if(exceptions.size()>0){
+            throw new CollectionException(exceptions);
+        }
+    }
+
+    @Override
+    public void editBookInformation(String column,String targetContent,String type,String code) throws CollectionException
+    {
+        BooksManageDao dao = new BooksManageDao();
+        List<Throwable> exceptions = new ArrayList<>();
+
+        try {
+            int ID = getBookId(type, code);
+            dao.editBook(ID,column,targetContent);
+        }catch (CollectionException e)
+        {
+            exceptions.add(e);
+        }
+        if (exceptions.size()>0)
+        {
             throw new CollectionException(exceptions);
         }
     }
