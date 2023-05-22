@@ -1,9 +1,8 @@
 package com.xiaohuo.libmanagergui;
 
-
-import com.xiaohuo.libmanagergui.exception.CollectionException;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.theme.impl.DarkTheme;
+import javafx.application.Application;
 
 /**
  * Main class
@@ -11,8 +10,9 @@ import io.vproxy.vfx.theme.impl.DarkTheme;
  */
 public class Main
 {
-    public static void main(String[] args) throws CollectionException
+    public static void main(String[] args)
     {
         Theme.setTheme(new DarkTheme());
+        Application.launch(ApplicationMain.class);
     }
 }
