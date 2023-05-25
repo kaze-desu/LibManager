@@ -1,19 +1,21 @@
 package com.xiaohuo.libmanagergui.controller;
 
-import com.xiaohuo.libmanagergui.exception.CollectionException;
-import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.scene.VScene;
 import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-import java.util.*;
+
 
 /**
  * BookSearchController is the controller of searching books.
@@ -29,29 +31,89 @@ public class BookSearchController extends VScene
            1.做一个搜索框，默认搜索标题，右边做一个下拉框，选择搜索方式
          * 2.在搜索框下直接做一个列表，用于显示结果予以选择
          */
+        var hBox = new HBox(20);
         var searchBox = new HBox();
-        var searchField = new TextField();
-        var choiceBox = new ChoiceBox<String>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"));
-        var searchButton = new FusionButton("搜索")
+        var panel = new VBox();
+        searchBox.setAlignment(Pos.CENTER);
+        hBox.setAlignment(Pos.CENTER);
+        panel.setAlignment(Pos.CENTER);
+        FXUtils.observeWidthHeightCenter(getContentPane(), panel);
+        var searchField = new TextField("输入搜索内容")
         {{
-            setPrefWidth(150);
+            setPrefWidth(600);
+            setPrefHeight(30);
         }};
 
-        searchButton.setOnAction(event -> {
+        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"));
+        var typeListBox = new ChoiceBox<>(FXCollections.observableArrayList(TypeList.values()))
+        {{
+            setVisible(false);
+            enableAutoContentWidthHeight();
 
+        }};
+
+        choiceBox.setValue("标题");
+        choiceBox.getSelectionModel().selectedIndexProperty()
+                .addListener((observable, oldValue, newValue) ->
+                {
+                    if (newValue.intValue() == 6)
+                    {
+                        searchField.setVisible(false);
+                        typeListBox.setVisible(true);
+                        searchField.setPrefWidth(0);
+                        searchField.setPrefHeight(0);
+                        typeListBox.setPrefWidth(600);
+                        typeListBox.setPrefHeight(30);
+                    }
+                    else
+                    {
+                        searchField.setVisible(true);
+                        typeListBox.setVisible(false);
+                        typeListBox.setPrefWidth(0);
+                        typeListBox.setPrefHeight(0);
+                        searchField.setPrefWidth(600);
+                        searchField.setPrefHeight(30);
+                    }
+                });
+        var searchButton = new FusionButton("搜索")
+        {{
+            setPrefWidth(100);
+            setPrefHeight(30);
+        }};
+
+        searchButton.setOnAction(event ->
+        {
+            var item = choiceBox.getSelectionModel().getSelectedItem();
+            switch (item)
+            {
+                case "标题":
+
+                    break;
+                case "作者":
+                    break;
+                case "发布者":
+                    break;
+                case "标签":
+                    break;
+                case "ISBN":
+                    break;
+                case "ISSN":
+                    break;
+            }
         });
 
+        var form = new VTableView<>();
+        form.getNode().setPrefWidth(1000);
+        form.getNode().setPrefHeight(580);
+
         searchField.setPromptText("书本标题");
-
-        searchBox.getChildren().addAll(searchField);
-        searchBox.setAlignment(Pos.CENTER);
-        getContentPane().getChildren().add(searchBox);
-        FXUtils.observeWidthHeightCenter(getContentPane(), searchBox);
-
-
-
+        searchBox.getChildren().addAll(searchField,typeListBox);
+        hBox.getChildren().addAll(searchBox,searchButton,choiceBox);
+        panel.getChildren().addAll(hBox,form.getNode());
+        getContentPane().getChildren().addAll(panel);
 
     }
+/*
     public int search() throws CollectionException
     {
         while (true)
@@ -220,5 +282,5 @@ public class BookSearchController extends VScene
     public int searchByIssn() throws CollectionException
     {
         return -1;
-    }
+    }*/
 }
