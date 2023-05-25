@@ -3,6 +3,15 @@ package com.xiaohuo.libmanagergui.controller;
 import com.xiaohuo.libmanagergui.exception.CollectionException;
 import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
+import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.scene.VScene;
+import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.util.FXUtils;
+import javafx.collections.FXCollections;
+import javafx.geometry.Pos;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 import java.util.*;
 
@@ -10,8 +19,39 @@ import java.util.*;
  * BookSearchController is the controller of searching books.
  * @author Xiaohuo(Wang Boyun)
  */
-public class BookSearchController
+public class BookSearchController extends VScene
 {
+    BookSearchController()
+    {
+        super(VSceneRole.MAIN);
+        enableAutoContentWidthHeight();
+        /*TODO
+           1.做一个搜索框，默认搜索标题，右边做一个下拉框，选择搜索方式
+         * 2.在搜索框下直接做一个列表，用于显示结果予以选择
+         */
+        var searchBox = new HBox();
+        var searchField = new TextField();
+        var choiceBox = new ChoiceBox<String>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"));
+        var searchButton = new FusionButton("搜索")
+        {{
+            setPrefWidth(150);
+        }};
+
+        searchButton.setOnAction(event -> {
+
+        });
+
+        searchField.setPromptText("书本标题");
+
+        searchBox.getChildren().addAll(searchField);
+        searchBox.setAlignment(Pos.CENTER);
+        getContentPane().getChildren().add(searchBox);
+        FXUtils.observeWidthHeightCenter(getContentPane(), searchBox);
+
+
+
+
+    }
     public int search() throws CollectionException
     {
         while (true)
