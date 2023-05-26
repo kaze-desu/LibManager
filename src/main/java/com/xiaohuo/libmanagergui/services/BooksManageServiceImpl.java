@@ -264,6 +264,29 @@ public class BooksManageServiceImpl implements BooksManageService
         return bookList;
     }
 
+    @Override
+    public ArrayList<String> searchByIdentityCode(String identityType,String identityCode) throws CollectionException
+    {
+        var dao = new BooksManageDao();
+        //Because the identityCode is an only value of the book, so the for loop should only run once.
+        if (identityType.equals(TypeList.BOOK.getType()))
+        {
+            var list = dao.searchBook("Isbn",identityCode);
+            for (Integer key:list.keySet())
+            {
+                return list.get(key);
+            }
+        }
+        else
+        {
+            var list = dao.searchBook("Issn",identityCode);
+            for (Integer key:list.keySet())
+            {
+                return list.get(key);
+            }
+        }
+        return null;
+    }
 
     @Override
     public int getBookId(String identityType, String identityCode) throws CollectionException

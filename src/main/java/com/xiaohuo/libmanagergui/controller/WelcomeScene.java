@@ -1,5 +1,6 @@
 package com.xiaohuo.libmanagergui.controller;
 
+import com.xiaohuo.libmanagergui.exception.CollectionException;
 import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.layout.VPadding;
@@ -33,7 +34,13 @@ public class WelcomeScene extends VScene
                     setOnAction(e -> {
                         var stage = new VStage();
                         var box = new HBox();
-                        box.getChildren().add(new BookSearchController().getNode());
+                        try
+                        {
+                            box.getChildren().add(new BookSearchController().getNode());
+                        } catch (CollectionException ex)
+                        {
+                            throw new RuntimeException(ex);
+                        }
                         stage.getInitialScene().getContentPane().getChildren().add(box);
                         FXUtils.observeWidthHeightCenter(stage.getInitialScene().getContentPane(), box);
                         stage.setTitle("搜索");

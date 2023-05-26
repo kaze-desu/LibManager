@@ -83,6 +83,14 @@ interface BooksManageService
     Map<Integer, ArrayList<String>>searchByCategory(String category) throws CollectionException;
 
     /**
+     * Search by identity Code.
+     * @param identityType The type of the book.
+     * @param identityCode The identity code(ISSN/ISBN) of the book.
+     * @return A arraylist of the book information, without book id.
+     * @throws CollectionException If the book is not exist, throw the exception.
+     */
+    ArrayList<String> searchByIdentityCode(String identityType,String identityCode) throws CollectionException;
+    /**
      * A filter by using identify code.
      * Search the book by type and filter the book by identity code.
      * @param identityType The book type.
