@@ -1,13 +1,15 @@
 package com.xiaohuo.libmanagergui.controller;
 
+import com.xiaohuo.libmanagergui.exception.CollectionException;
+import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
 import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.scene.VScene;
 import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.ui.table.VTableColumn;
 import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
@@ -15,6 +17,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
+import java.util.Map;
 
 
 /**
@@ -31,10 +35,10 @@ public class BookSearchController extends VScene
            1.做一个搜索框，默认搜索标题，右边做一个下拉框，选择搜索方式
          * 2.在搜索框下直接做一个列表，用于显示结果予以选择
          */
+        var service = new BooksManageServiceImpl();
         var hBox = new HBox(20);
         var searchBox = new HBox();
         var panel = new VBox();
-        searchBox.setAlignment(Pos.CENTER);
         hBox.setAlignment(Pos.CENTER);
         panel.setAlignment(Pos.CENTER);
         FXUtils.observeWidthHeightCenter(getContentPane(), panel);
@@ -51,7 +55,19 @@ public class BookSearchController extends VScene
             enableAutoContentWidthHeight();
 
         }};
+        //table
+        var form = new VTableView<Data>();
+        form.getNode().setPrefWidth(1000);
+        form.getNode().setPrefHeight(580);
+        var typeColumn = new VTableColumn<Data,String>("书本分类", data -> data.type);
+        var titleColumn = new VTableColumn<Data,String>("书本标题", data -> data.title);
+        var authorColumn = new VTableColumn<Data,String>("作者", data -> data.author);
+        var publisherColumn = new VTableColumn<Data,String>("发布者", data -> data.publisher);
+        var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn);
+        var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn);
+        form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn);
 
+        //choice box event
         choiceBox.setValue("标题");
         choiceBox.getSelectionModel().selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) ->
@@ -80,38 +96,87 @@ public class BookSearchController extends VScene
             setPrefWidth(100);
             setPrefHeight(30);
         }};
-
+        //search button event
         searchButton.setOnAction(event ->
         {
             var item = choiceBox.getSelectionModel().getSelectedItem();
-            switch (item)
+            if(!"书本分类".equals(choiceBox.getSelectionModel().getSelectedItem()))
             {
-                case "标题":
+                switch (item)
+                {
+                    case "标题":
+                        try
+                        {
+                            var list = service.search(searchField.getText());
+                            for(Map.Entry<Integer,ArrayList<String>>information:list.entrySet())
+                            {
+                                var data = new Data();
+                                data.setData(information.getValue());
+                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                {
+                                    data.isbn = information.getValue().get(5);
+                                }
+                                else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                }
+                                form.getItems().add(data);
 
-                    break;
-                case "作者":
-                    break;
-                case "发布者":
-                    break;
-                case "标签":
-                    break;
-                case "ISBN":
-                    break;
-                case "ISSN":
-                    break;
+                            }
+                        }
+                        catch (CollectionException e)
+                        {
+                            throw new RuntimeException(e);
+                        }
+
+                        break;
+                    case "作者":
+                        break;
+                    case "发布者":
+                        break;
+                    case "标签":
+                        break;
+                    case "ISBN":
+                        break;
+                    case "ISSN":
+                        break;
+                }
             }
+            else
+            {
+
+            }
+
         });
 
-        var form = new VTableView<>();
-        form.getNode().setPrefWidth(1000);
-        form.getNode().setPrefHeight(580);
+
+
 
         searchField.setPromptText("书本标题");
         searchBox.getChildren().addAll(searchField,typeListBox);
         hBox.getChildren().addAll(searchBox,searchButton,choiceBox);
-        panel.getChildren().addAll(hBox,form.getNode());
+        panel.getChildren().addAll(hBox,new VPadding(20),form.getNode());
         getContentPane().getChildren().addAll(panel);
 
+    }
+    public static class Data
+    {
+        public String type;
+        public String title;
+        public String author;
+        public String publisher;
+        public String tag;
+        public String isbn;
+        public String issn;
+
+        public void setData(ArrayList<String> data)
+        {
+            this.type = data.get(0);
+            this.title = data.get(1);
+            this.author = data.get(2);
+            this.publisher = data.get(3);
+            this.tag = data.get(4);
+        }
     }
 /*
     public int search() throws CollectionException

@@ -1,5 +1,6 @@
 package com.xiaohuo.libmanagergui;
 
+import com.xiaohuo.libmanagergui.exception.CollectionException;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.theme.impl.DarkTheme;
 import javafx.application.Application;

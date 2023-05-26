@@ -10,21 +10,21 @@ public abstract class BaseBooks
 {
 
     public String type;
-    protected String tittle;
+    protected String title;
     protected String author;
     protected String publisher;
     protected String category;
 
     /**
      * The constructor of the BaseBooks.
-     * @param tittle The tittle of the book.
+     * @param title The title of the book.
      * @param author The author of the book.
      * @param publisher The publisher of the book.
      * @param category The category of the book.
      */
-    public BaseBooks(String tittle, String author, String publisher, String category)
+    public BaseBooks(String title, String author, String publisher, String category)
     {
-        this.tittle = tittle;
+        this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.category = category;
@@ -47,7 +47,7 @@ public abstract class BaseBooks
     {
         ArrayList<String> bookInfo = new ArrayList<>();
         bookInfo.add(type);
-        bookInfo.add(tittle);
+        bookInfo.add(title);
         bookInfo.add(author);
         bookInfo.add(publisher);
         bookInfo.add(category);
@@ -69,8 +69,8 @@ public abstract class BaseBooks
         return category;
     }
 
-    public String getTittle()
+    public String getTitle()
     {
-        return tittle;
+        return title;
     }
 }

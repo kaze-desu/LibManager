@@ -16,7 +16,7 @@ public class Init
     private String address = "null";
     private String databaseName = "null";
     private String testMode = "false";
-    private final String rootPath = System.getProperty("user.dir") + "/src/com/xiaohuo/libmanager";
+    private final String rootPath = System.getProperty("user.dir") + "/src/main/java/com/xiaohuo/libmanagergui";
     private final String setting = rootPath + "/setting.properties";
     /**
      * The function use to initialize the config file.
@@ -32,48 +32,26 @@ public class Init
                 break;
             }
             //If the config file is not exist, create a new one.
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Please input your database address:");
-            address = scanner.nextLine();
-            System.out.println("Please input your database username:");
-            username = scanner.nextLine();
-            System.out.println("Please input your database password:");
-            password = scanner.nextLine();
-            System.out.println("Please input your database name:");
-            databaseName = scanner.nextLine();
-            System.out.println("Your database address is: " + address);
-            System.out.println("Your database username is: " + username);
-            System.out.println("Your database password is: " + password);
-            System.out.println("Your database name is: " + databaseName);
-            System.out.println("Is this correct? (Y/N)");
-            String confirm = scanner.nextLine();
-            if ("Y".equals(confirm) || "y".equals(confirm))
+            address = "gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812";
+            username = "xiaohuo";
+            password = "Kc8h_-MLtwb9792";
+            databaseName = "test";
+            try
             {
-                try
+                //Test the database connection, if failed, return to the beginning.
+                if (!DatabaseConnect.check(username, password, address, databaseName))
                 {
-                    //Test the database connection, if failed, return to the beginning.
-                    if(!DatabaseConnect.check(username, password, address, databaseName))
-                    {
-                        System.out.println("Connect test failed, please check your data or or internet status.");
-                        continue;
-                    }
-                    System.out.println("Connect test success, creating config file...");
-                    createConfig();
+                    System.out.println("Connect test failed, please check your data or or internet status.");
+                    continue;
                 }
-                catch (IOException e)
-                {
-                    exceptions.add(e);
-                }
-                break;
+                System.out.println("Connect test success, creating config file...");
+                createConfig();
             }
-            else if ("N".equals(confirm) || "n".equals(confirm))
+            catch (IOException e)
             {
-                System.out.println("Please re-enter your database information");
+                exceptions.add(e);
             }
-            else
-            {
-                System.out.println("Please input Y or N");
-            }
+            break;
         }
         readConfig();
         if (exceptions.size() > 0)
