@@ -5,6 +5,7 @@ import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.layout.VPadding;
+import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VScene;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.table.VTableColumn;
@@ -18,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,9 +29,10 @@ import java.util.Map;
  */
 public class BookSearchController extends VScene
 {
-    BookSearchController()
+    BookSearchController() throws CollectionException
     {
         super(VSceneRole.MAIN);
+        List<Throwable> exceptions = new ArrayList<>();
         enableAutoContentWidthHeight();
         /*TODO
            1.做一个搜索框，默认搜索标题，右边做一个下拉框，选择搜索方式
@@ -44,8 +47,10 @@ public class BookSearchController extends VScene
         FXUtils.observeWidthHeightCenter(getContentPane(), panel);
         var searchField = new TextField("输入搜索内容")
         {{
+            setAlignment(Pos.CENTER_LEFT);
             setPrefWidth(600);
             setPrefHeight(30);
+            enableAutoContentWidthHeight();
         }};
 
         var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"));
@@ -99,64 +104,181 @@ public class BookSearchController extends VScene
         //search button event
         searchButton.setOnAction(event ->
         {
+            form.getItems().clear();
             var item = choiceBox.getSelectionModel().getSelectedItem();
             if(!"书本分类".equals(choiceBox.getSelectionModel().getSelectedItem()))
             {
                 switch (item)
                 {
-                    case "标题":
+                    case "标题" ->
+                    {
                         try
                         {
                             var list = service.search(searchField.getText());
-                            for(Map.Entry<Integer,ArrayList<String>>information:list.entrySet())
+                            for (Map.Entry<Integer, ArrayList<String>> information : list.entrySet())
                             {
                                 var data = new Data();
                                 data.setData(information.getValue());
                                 if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
                                 {
                                     data.isbn = information.getValue().get(5);
-                                }
-                                else
+                                } else
                                 {
                                     data.issn = information.getValue().get(5);
                                 }
                                 form.getItems().add(data);
 
                             }
-                        }
-                        catch (CollectionException e)
+                        } catch (CollectionException e)
                         {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
+                            exceptions.add(e);
                         }
+                    }
+                    case "作者" ->
+                    {
+                        try
+                        {
+                            var list = service.searchByAuthor(searchField.getText());
+                            for (Map.Entry<Integer, ArrayList<String>> information : list.entrySet())
+                            {
+                                var data = new Data();
+                                data.setData(information.getValue());
+                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                {
+                                    data.isbn = information.getValue().get(5);
+                                } else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                }
+                                form.getItems().add(data);
 
-                        break;
-                    case "作者":
-                        break;
-                    case "发布者":
-                        break;
-                    case "标签":
-                        break;
-                    case "ISBN":
-                        break;
-                    case "ISSN":
-                        break;
+                            }
+                        } catch (CollectionException e)
+                        {
+                            e.printStackTrace();
+                            exceptions.add(e);
+                        }
+                    }
+                    case "发布者" ->
+                    {
+                        try
+                        {
+                            var list = service.searchByPublisher(searchField.getText());
+                            for (Map.Entry<Integer, ArrayList<String>> information : list.entrySet())
+                            {
+                                var data = new Data();
+                                data.setData(information.getValue());
+                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                {
+                                    data.isbn = information.getValue().get(5);
+                                } else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                }
+                                form.getItems().add(data);
+
+                            }
+                        } catch (CollectionException e)
+                        {
+                            e.printStackTrace();
+                            exceptions.add(e);
+                        }
+                    }
+                    case "标签" ->
+                    {
+                        try
+                        {
+                            var list = service.searchByCategory(searchField.getText());
+                            for (Map.Entry<Integer, ArrayList<String>> information : list.entrySet())
+                            {
+                                var data = new Data();
+                                data.setData(information.getValue());
+                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                {
+                                    data.isbn = information.getValue().get(5);
+                                } else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                }
+                                form.getItems().add(data);
+
+                            }
+                        } catch (CollectionException e)
+                        {
+                            e.printStackTrace();
+                            exceptions.add(e);
+                        }
+                    }
+                    case "ISBN" ->
+                    {
+                        try
+                        {
+                            var list = service.searchByIdentityCode(TypeList.BOOK.getType(), searchField.getText());
+                            var data = new Data();
+                            data.setData(list);
+                            data.isbn = list.get(5);
+                        } catch (CollectionException e)
+                        {
+                            e.printStackTrace();
+                            exceptions.add(e);
+                        }
+                    }
+                    case "ISSN" ->
+                    {
+                        try
+                        {
+                            var list = service.searchByIdentityCode(TypeList.JOURNAL.getType(), searchField.getText());
+                            var data = new Data();
+                            data.setData(list);
+                            data.isbn = list.get(5);
+                        } catch (CollectionException e)
+                        {
+                            e.printStackTrace();
+                            exceptions.add(e);
+                        }
+                    }
                 }
             }
             else
             {
+                try
+                {
+                    var list = service.searchByType(typeListBox.getSelectionModel().getSelectedItem().toString());
+                    for(Map.Entry<Integer,ArrayList<String>>information:list.entrySet())
+                    {
+                        var data = new Data();
+                        data.setData(information.getValue());
+                        if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                        {
+                            data.isbn = information.getValue().get(5);
+                        }
+                        else
+                        {
+                            data.issn = information.getValue().get(5);
+                        }
+                        form.getItems().add(data);
 
+                    }
+                }
+                catch (CollectionException e)
+                {
+                    e.printStackTrace();
+                    exceptions.add(e);
+                }
             }
 
         });
-
-
-
 
         searchField.setPromptText("书本标题");
         searchBox.getChildren().addAll(searchField,typeListBox);
         hBox.getChildren().addAll(searchBox,searchButton,choiceBox);
         panel.getChildren().addAll(hBox,new VPadding(20),form.getNode());
         getContentPane().getChildren().addAll(panel);
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
 
     }
     public static class Data
