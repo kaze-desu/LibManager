@@ -1,7 +1,9 @@
 package com.xiaohuo.libmanagergui;
 
+import com.xiaohuo.libmanagergui.controller.BookSearchController;
 import com.xiaohuo.libmanagergui.controller.WelcomeScene;
 
+import com.xiaohuo.libmanagergui.exception.CollectionException;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.stage.VStage;
 
@@ -22,13 +24,13 @@ public class ApplicationMain extends Application
     private final List<VScene> scenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
     @Override
-    public void start(Stage primaryStage)
+    public void start(Stage primaryStage) throws CollectionException
     {
-        scenes.add(new WelcomeScene());
+        scenes.add(new BookSearchController(()->sceneGroup));
         var vstageInit = new VStageInitParams();
         VStage stage = new VStage(primaryStage, vstageInit);
         sceneGroup = new VSceneGroup(scenes.get(0));
-        sceneGroup.show(scenes.get(0),VSceneShowMethod.FROM_RIGHT);
+        sceneGroup.show(scenes.get(0),VSceneShowMethod.FADE_IN);
 
         var box = new HBox();
         box.getChildren().add(sceneGroup.getNode());

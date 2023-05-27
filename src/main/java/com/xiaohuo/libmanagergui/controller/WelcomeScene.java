@@ -5,6 +5,7 @@ import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.scene.VScene;
+import io.vproxy.vfx.ui.scene.VSceneGroup;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.ui.wrapper.ThemeLabel;
@@ -19,7 +20,7 @@ import javafx.scene.layout.VBox;
 public class WelcomeScene extends VScene
 {
 
-    public WelcomeScene()
+    public WelcomeScene(VSceneGroup sceneGroup)
     {
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
@@ -36,7 +37,7 @@ public class WelcomeScene extends VScene
                         var box = new HBox();
                         try
                         {
-                            box.getChildren().add(new BookSearchController().getNode());
+                            box.getChildren().add(new BookSearchController(()->sceneGroup).getNode());
                         } catch (CollectionException ex)
                         {
                             throw new RuntimeException(ex);
@@ -45,7 +46,7 @@ public class WelcomeScene extends VScene
                         FXUtils.observeWidthHeightCenter(stage.getInitialScene().getContentPane(), box);
                         stage.setTitle("搜索");
                         stage.getStage().setWidth(1280);
-                        stage.getStage().setHeight(800);
+                        stage.getStage().setHeight(700);
                         stage.getStage().centerOnScreen();
                         stage.getInitialScene().enableAutoContentWidthHeight();
                         stage.show();

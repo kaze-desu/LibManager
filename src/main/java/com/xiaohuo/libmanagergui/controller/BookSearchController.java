@@ -2,12 +2,12 @@ package com.xiaohuo.libmanagergui.controller;
 
 import com.xiaohuo.libmanagergui.exception.CollectionException;
 import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
+import com.xiaohuo.libmanagergui.services.BooksStatusServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
-import io.vproxy.vfx.ui.scene.VScene;
-import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.table.VTableColumn;
 import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 
 /**
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 public class BookSearchController extends VScene
 {
-    BookSearchController() throws CollectionException
+    public BookSearchController(Supplier<VSceneGroup> sceneGroupSup) throws CollectionException
     {
         super(VSceneRole.MAIN);
         List<Throwable> exceptions = new ArrayList<>();
@@ -270,10 +271,71 @@ public class BookSearchController extends VScene
 
         });
 
+        var statusService = new BooksStatusServiceImpl();
+        var controlPane = new FusionPane(false);
+        controlPane.getContentPane().getChildren().add(new VBox(
+                new FusionButton("借阅") {{
+                    setOnAction(e ->
+                    {
+                        var selected = form.getSelectedItem();
+                        if(selected !=null)
+                        {
+                            if(selected.type.equals(TypeList.BOOK.getType()))
+                            {
+                                try
+                                {
+                                    var statusList = statusService.searchBookStatus(selected.type, selected.isbn);
+                                    var statusScene = new BookStatusController(statusList);
+                                    /*VSceneGroup status = new VSceneGroup(statusScene);*/
+                                    sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.TO_RIGHT);
+                                    FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FROM_RIGHT));
+                                    System.out.println("show1");
+                                }
+                                catch (CollectionException ex)
+                                {
+                                    ex.printStackTrace();
+                                    exceptions.add(ex);
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    var statusList = statusService.searchBookStatus(selected.type, selected.issn);
+                                    var statusScene = new BookStatusController(statusList);
+                                    /*VSceneGroup status = new VSceneGroup(statusScene);*/
+                                    sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.TO_RIGHT);
+                                    FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FROM_RIGHT));
+                                    System.out.println("show2");
+                                }
+                                catch (CollectionException ex)
+                                {
+                                    ex.printStackTrace();
+                                    exceptions.add(ex);
+                                }
+                            }
+                        }
+                    });
+                    setPrefWidth(120);
+                    setPrefHeight(40);
+                }},
+                new VPadding(10),
+                new FusionButton("归还") {{
+                    setOnAction(e ->
+                    {
+                        var selected = form.getSelectedItem();
+                    });
+                    setPrefWidth(120);
+                    setPrefHeight(40);
+                }}
+        ));
         searchField.setPromptText("书本标题");
         searchBox.getChildren().addAll(searchField,typeListBox);
         hBox.getChildren().addAll(searchBox,searchButton,choiceBox);
-        panel.getChildren().addAll(hBox,new VPadding(20),form.getNode());
+        var formBox = new HBox(20);
+        formBox.getChildren().addAll(form.getNode(),controlPane.getNode());
+        FXUtils.observeWidthHeightCenter(getContentPane(),formBox);
+        panel.getChildren().addAll(hBox,new VPadding(20),formBox);
         getContentPane().getChildren().addAll(panel);
         if(exceptions.size()>0)
         {
