@@ -41,13 +41,14 @@ public interface BooksStatusService
     /**
      * Search the book status by book type and identity code.
      * Convert all the data to string and return it.
-     * @param type The book type.
+     *
+     * @param type         The book type.
      * @param identityCode The identity code of the book.
      * @return Integer is statusId, String is the location of the book.
      * @throws CollectionException If the book is not exist, throw the exception.
      */
 
-    Map<Integer,String> searchAllBookStatus(String type, String identityCode) throws CollectionException;
+    Map<Integer, BooksStatusServiceImpl.StatusData> searchAllBookStatus(String type, String identityCode) throws CollectionException;
 
     /**
      * Get all the statusId;

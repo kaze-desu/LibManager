@@ -4,6 +4,7 @@ import com.xiaohuo.libmanagergui.dao.BooksStatusDao;
 import com.xiaohuo.libmanagergui.exception.CollectionException;
 import com.xiaohuo.libmanagergui.services.status.Status;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
+import io.vproxy.vfx.ui.alert.StackTraceAlert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 /**
  * Classify the book type and transfer the status to dao layer
- * @author xiaohuo
+ * @author xiaohuo(Wang Boyun)
  */
 public class BooksStatusServiceImpl implements BooksStatusService
 {
@@ -28,15 +29,13 @@ public class BooksStatusServiceImpl implements BooksStatusService
             int bookId = manageService.getBookId(type,identityCode);
             if(bookId == -1)
             {
-                exceptions.add(new Throwable("The book is not exist!"));
-                throw new CollectionException(exceptions);
+                StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
             }
             dao.addStatus(bookId,location,status);
         }
         else
         {
-            exceptions.add(new Throwable("The book type is not exist!"));
-            throw new CollectionException(exceptions);
+            StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
         }
     }
     @Override
@@ -73,33 +72,30 @@ public class BooksStatusServiceImpl implements BooksStatusService
         }
         else
         {
-            exceptions.add(new Throwable("The book type is not exist!"));
-            throw new CollectionException(exceptions);
+            StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
         }
         return statusList;
     }
 
     @Override
-    public Map<Integer, String> searchAllBookStatus(String type, String identityCode) throws CollectionException
+    public Map<Integer, StatusData> searchAllBookStatus(String type, String identityCode) throws CollectionException
     {
         List<Throwable> exceptions = new ArrayList<>();
         BooksStatusDao dao = new BooksStatusDao();
         BooksManageServiceImpl manageService = new BooksManageServiceImpl();
         int bookId = manageService.getBookId(type,identityCode);
-        Map<Integer,String> statusList = new HashMap<>();
+        Map<Integer,StatusData> statusList = new HashMap<>();
         if(checkBookType(type))
         {
             Map<Integer,ArrayList<Status>> statusRawList = dao.searchStatus(bookId);
             for(int statusId : statusRawList.keySet())
             {
-                statusList.put(statusId,statusRawList.get(statusId).get(0).getLocation());
-
+                statusList.put(statusId,new StatusData(statusRawList.get(statusId).get(0).getLocation(),statusRawList.get(statusId).get(0).getStatus()));
             }
         }
         else
         {
-            exceptions.add(new Throwable("The book type is not exist!"));
-            throw new CollectionException(exceptions);
+            StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
         }
         return statusList;
     }
@@ -141,6 +137,17 @@ public class BooksStatusServiceImpl implements BooksStatusService
     {
         BooksStatusDao dao = new BooksStatusDao();
         dao.deleteStatus(statusId);
+    }
+    public static class StatusData
+    {
+        public String location;
+        public boolean status;
+        public StatusData(String location,boolean status)
+        {
+            this.location = location;
+            this.status = status;
+        }
+
     }
 }
 

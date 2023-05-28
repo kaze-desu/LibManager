@@ -5,10 +5,12 @@ import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.BooksStatusServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
 
-
-import java.util.ArrayList;
 import java.util.Scanner;
 
+
+/**
+ * @author xiaohuo(Wang Boyun)
+ */
 public class BookDeleteController {
     /**
      * Delete process:
@@ -17,7 +19,6 @@ public class BookDeleteController {
      * Step 3 -> if user don't know the ISBN or ISSN, firstly we use the title of the book to find all the
      *           ISBN or ISSN code of that book. Then we ask use to choose one ISBN or ISSN code and
      *           eventually use deleteBookByIdentityCode() to delete book
-     * @throws CollectionException
      */
     public void deleteBook() throws CollectionException
     {
@@ -32,7 +33,7 @@ public class BookDeleteController {
             type = scanner.nextLine();
         }
 
-        int choice;
+/*        int choice;
         ArrayList<Integer> statusID;
         System.out.print("Enter 0 if you know the book ISBN or ISSN, other wise enter 1: ");
         choice = scanner.nextInt();
@@ -51,7 +52,7 @@ public class BookDeleteController {
             ArrayList<String> book = serviceM.getBookByTitleAndType(title,type);
             statusID = serviceS.getStatusId(serviceS.searchAllBookStatus(type,book.get(4)));
             serviceM.deleteBookByIdentityCode(type,book.get(6),statusID);
-        }
+        }*/
     }
     /**
      * Check is the user input type in the TypeList

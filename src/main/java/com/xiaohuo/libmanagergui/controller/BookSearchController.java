@@ -4,6 +4,8 @@ import com.xiaohuo.libmanagergui.exception.CollectionException;
 import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.BooksStatusServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
+import io.vproxy.vfx.ui.alert.SimpleAlert;
+import io.vproxy.vfx.ui.alert.StackTraceAlert;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
@@ -13,6 +15,7 @@ import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -35,44 +38,45 @@ public class BookSearchController extends VScene
         super(VSceneRole.MAIN);
         List<Throwable> exceptions = new ArrayList<>();
         enableAutoContentWidthHeight();
-        /*TODO
-           1.做一个搜索框，默认搜索标题，右边做一个下拉框，选择搜索方式
-         * 2.在搜索框下直接做一个列表，用于显示结果予以选择
-         */
         var service = new BooksManageServiceImpl();
-        var hBox = new HBox(20);
-        var searchBox = new HBox();
-        var panel = new VBox();
-        hBox.setAlignment(Pos.CENTER);
-        panel.setAlignment(Pos.CENTER);
-        FXUtils.observeWidthHeightCenter(getContentPane(), panel);
+        var hBox = new HBox(20)
+        {{
+            setAlignment(Pos.CENTER);
+            enableAutoContentWidthHeight();
+        }};
+        var panel = new VBox()
+        {{
+            setAlignment(Pos.CENTER);
+            enableAutoContentWidthHeight();
+        }};
         var searchField = new TextField("输入搜索内容")
         {{
             setAlignment(Pos.CENTER_LEFT);
             setPrefWidth(600);
             setPrefHeight(30);
             enableAutoContentWidthHeight();
+            managedProperty().bind(visibleProperty());
         }};
 
-        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"));
+        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"))
+        {{
+            enableAutoContentWidthHeight();
+        }};
         var typeListBox = new ChoiceBox<>(FXCollections.observableArrayList(TypeList.values()))
         {{
-            setVisible(false);
+            setValue(TypeList.BOOK);
             enableAutoContentWidthHeight();
-
+            setPrefWidth(600);
+            setPrefHeight(30);
+            managedProperty().bind(visibleProperty());
+            setVisible(false);
         }};
-        //table
-        var form = new VTableView<Data>();
-        form.getNode().setPrefWidth(1000);
-        form.getNode().setPrefHeight(580);
-        var typeColumn = new VTableColumn<Data,String>("书本分类", data -> data.type);
-        var titleColumn = new VTableColumn<Data,String>("书本标题", data -> data.title);
-        var authorColumn = new VTableColumn<Data,String>("作者", data -> data.author);
-        var publisherColumn = new VTableColumn<Data,String>("发布者", data -> data.publisher);
-        var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn);
-        var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn);
-        form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn);
-
+        var searchBox = new HBox()
+        {{
+            setAlignment(Pos.CENTER);
+            enableAutoContentWidthHeight();
+            getChildren().addAll(searchField,typeListBox,choiceBox);
+        }};
         //choice box event
         choiceBox.setValue("标题");
         choiceBox.getSelectionModel().selectedIndexProperty()
@@ -82,25 +86,37 @@ public class BookSearchController extends VScene
                     {
                         searchField.setVisible(false);
                         typeListBox.setVisible(true);
-                        searchField.setPrefWidth(0);
-                        searchField.setPrefHeight(0);
-                        typeListBox.setPrefWidth(600);
-                        typeListBox.setPrefHeight(30);
+
                     }
                     else
                     {
                         searchField.setVisible(true);
                         typeListBox.setVisible(false);
-                        typeListBox.setPrefWidth(0);
-                        typeListBox.setPrefHeight(0);
-                        searchField.setPrefWidth(600);
-                        searchField.setPrefHeight(30);
+
                     }
                 });
+
+        //table
+        var form = new VTableView<Data>()
+        {{
+            enableAutoContentWidthHeight();
+            getNode().setPrefWidth(1000);
+            getNode().setPrefHeight(580);
+        }};
+        var typeColumn = new VTableColumn<Data,String>("书本分类", data -> data.type);
+        var titleColumn = new VTableColumn<Data,String>("书本标题", data -> data.title);
+        var authorColumn = new VTableColumn<Data,String>("作者", data -> data.author);
+        var publisherColumn = new VTableColumn<Data,String>("发布者", data -> data.publisher);
+        var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn);
+        var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn);
+        form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn);
+
+
         var searchButton = new FusionButton("搜索")
         {{
             setPrefWidth(100);
             setPrefHeight(30);
+            enableAutoContentWidthHeight();
         }};
         //search button event
         searchButton.setOnAction(event ->
@@ -273,70 +289,116 @@ public class BookSearchController extends VScene
 
         var statusService = new BooksStatusServiceImpl();
         var controlPane = new FusionPane(false);
-        controlPane.getContentPane().getChildren().add(new VBox(
-                new FusionButton("借阅") {{
-                    setOnAction(e ->
+        var vBox = new VBox(10);
+        var borrowButton = new FusionButton("借阅") {{
+            setPrefWidth(120);
+            setPrefHeight(40);
+            enableAutoContentWidthHeight();
+            setOnAction(e ->
+            {
+                var selected = form.getSelectedItem();
+                if(selected !=null)
+                {
+                    if(selected.type.equals(TypeList.BOOK.getType()))
                     {
-                        var selected = form.getSelectedItem();
-                        if(selected !=null)
+                        try
                         {
-                            if(selected.type.equals(TypeList.BOOK.getType()))
+                            var statusList = statusService.searchBookStatus(selected.type, selected.isbn);
+                            if (statusList.isEmpty())
                             {
-                                try
-                                {
-                                    var statusList = statusService.searchBookStatus(selected.type, selected.isbn);
-                                    var statusScene = new BookStatusController(statusList);
-                                    /*VSceneGroup status = new VSceneGroup(statusScene);*/
-                                    sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.TO_RIGHT);
-                                    FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FROM_RIGHT));
-                                    System.out.println("show1");
-                                }
-                                catch (CollectionException ex)
-                                {
-                                    ex.printStackTrace();
-                                    exceptions.add(ex);
-                                }
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"该书籍已全部被借阅");
                             }
                             else
                             {
-                                try
-                                {
-                                    var statusList = statusService.searchBookStatus(selected.type, selected.issn);
-                                    var statusScene = new BookStatusController(statusList);
-                                    /*VSceneGroup status = new VSceneGroup(statusScene);*/
-                                    sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.TO_RIGHT);
-                                    FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FROM_RIGHT));
-                                    System.out.println("show2");
-                                }
-                                catch (CollectionException ex)
-                                {
-                                    ex.printStackTrace();
-                                    exceptions.add(ex);
-                                }
+                                var statusScene = new BookStatusBorrowController(sceneGroupSup,statusList);
+                                /*VSceneGroup status = new VSceneGroup(statusScene);*/
+                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                                FXUtils.observeWidthHeightCenter(getContentPane(),sceneGroupSup.get().getNode());
+                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
                             }
                         }
-                    });
-                    setPrefWidth(120);
-                    setPrefHeight(40);
-                }},
-                new VPadding(10),
-                new FusionButton("归还") {{
-                    setOnAction(e ->
+                        catch (CollectionException ex)
+                        {
+                            ex.printStackTrace();
+                            exceptions.add(ex);
+                        }
+                    }
+                    else
                     {
-                        var selected = form.getSelectedItem();
-                    });
-                    setPrefWidth(120);
-                    setPrefHeight(40);
-                }}
-        ));
+                        try
+                        {
+                            var statusList = statusService.searchBookStatus(selected.type, selected.issn);
+                            if (statusList.isEmpty())
+                            {
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"该书籍已全部被借阅");
+                            }
+                            else
+                            {
+                                var statusScene = new BookStatusBorrowController(sceneGroupSup,statusList);
+                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.TO_RIGHT);
+                                FXUtils.observeWidthHeightCenter(getContentPane(),sceneGroupSup.get().getNode());
+                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FROM_RIGHT));
+                            }
+
+                        }
+                        catch (CollectionException ex)
+                        {
+                            ex.printStackTrace();
+                            exceptions.add(ex);
+                        }
+                    }
+                }
+            });
+        }};
+        var revertButton = new FusionButton("归还") {{
+            enableAutoContentWidthHeight();
+            setOnAction(e ->
+            {
+                var selected = form.getSelectedItem();
+                if(selected.type.equals(TypeList.BOOK.getType()))
+                {
+                    try
+                    {
+                        var allStatusList = statusService.searchAllBookStatus(TypeList.BOOK.getType(), selected.isbn);
+                        if(allStatusList.isEmpty())
+                        {
+                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"图书馆中暂无该书籍");
+                        }
+                        else
+                        {
+                         //TODO 完成归还功能
+                        }
+
+                    }
+                    catch (CollectionException ex)
+                    {
+                        StackTraceAlert.showAndWait("在获取书本状态时出现错误：",ex);
+                    }
+                }
+            });
+            setPrefWidth(120);
+            setPrefHeight(40);
+        }};
+        vBox.getChildren().addAll(borrowButton,revertButton);
+        FXUtils.observeWidthHeightCenter(vBox,borrowButton);
+        FXUtils.observeWidthHeightCenter(vBox,revertButton);
+        controlPane.getContentPane().getChildren().add(vBox);
+        FXUtils.observeWidthHeightCenter(controlPane.getContentPane(),vBox);
         searchField.setPromptText("书本标题");
-        searchBox.getChildren().addAll(searchField,typeListBox);
         hBox.getChildren().addAll(searchBox,searchButton,choiceBox);
+        FXUtils.observeWidthHeightCenter(hBox,searchBox);
+        FXUtils.observeWidthHeightCenter(hBox,searchButton);
+        FXUtils.observeWidthHeightCenter(hBox,choiceBox);
         var formBox = new HBox(20);
         formBox.getChildren().addAll(form.getNode(),controlPane.getNode());
-        FXUtils.observeWidthHeightCenter(getContentPane(),formBox);
+        FXUtils.observeWidthHeightCenter(formBox,form.getNode());
+        FXUtils.observeWidthHeightCenter(formBox,controlPane.getNode());
         panel.getChildren().addAll(hBox,new VPadding(20),formBox);
-        getContentPane().getChildren().addAll(panel);
+        FXUtils.observeWidthHeightCenter(panel,hBox);
+        FXUtils.observeWidthHeightCenter(panel,formBox);
+        getContentPane().getChildren().add(panel);
+        FXUtils.observeWidthHeightCenter(getContentPane(),panel);
+        getContentPane().setMinHeight(650);
         if(exceptions.size()>0)
         {
             throw new CollectionException(exceptions);
