@@ -109,7 +109,8 @@ public class BookSearchController extends VScene
         var publisherColumn = new VTableColumn<Data,String>("发布者", data -> data.publisher);
         var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn);
         var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn);
-        form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn);
+        var copyRightColumn = new VTableColumn<Data,String>("版权", data -> data.copyRight);
+        form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn,copyRightColumn);
 
 
         var searchButton = new FusionButton("搜索")
@@ -270,9 +271,14 @@ public class BookSearchController extends VScene
                         {
                             data.isbn = information.getValue().get(5);
                         }
-                        else
+                        else if (information.getValue().get(0).equals(TypeList.JOURNAL.toString()))
                         {
                             data.issn = information.getValue().get(5);
+                        }
+                        else if (information.getValue().get(0).equals(TypeList.NEWSPAPER.toString()))
+                        {
+                            data.issn = information.getValue().get(5);
+                            data.copyRight = information.getValue().get(6);
                         }
                         form.getItems().add(data);
 
@@ -414,6 +420,7 @@ public class BookSearchController extends VScene
         public String tag;
         public String isbn;
         public String issn;
+        public String copyRight;
 
         public void setData(ArrayList<String> data)
         {

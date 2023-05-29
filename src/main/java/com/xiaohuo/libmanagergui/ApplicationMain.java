@@ -37,14 +37,13 @@ public class ApplicationMain extends Application
     public void start(Stage primaryStage) throws CollectionException
     {
         scenes.add(new BookSearchController(()->sceneGroup));
-        scenes.add(new AdminInterfaceController());
+        scenes.add(new AdminInterfaceController(()->sceneGroup));
         scenes.add(new AdminLoginController(()->sceneGroup,scenes.get(1)));
         var vstageInit = new VStageInitParams();
         VStage stage = new VStage(primaryStage, vstageInit);
         sceneGroup = new VSceneGroup(scenes.get(0));
         sceneGroup.addScene(scenes.get(1));
         sceneGroup.addScene(scenes.get(2), VSceneHideMethod.FADE_OUT);
-        //sceneGroup.show(scenes.get(1),VSceneShowMethod.FADE_IN);
         var menuScene = new VScene(VSceneRole.DRAWER_VERTICAL);
         menuScene.getNode().setPrefWidth(450);
         menuScene.enableAutoContentWidth();
@@ -78,9 +77,7 @@ public class ApplicationMain extends Application
             setPrefWidth(200);
         }};
         searchButton.setDisableAnimation(true);
-        searchButton.setOnAction(e -> {
-            sceneGroup.show(scenes.get(0), VSceneShowMethod.FADE_IN);
-        });
+        searchButton.setOnAction(e ->sceneGroup.show(scenes.get(0), VSceneShowMethod.FROM_RIGHT));
         menuVBox.getChildren().add(searchButton);
         FXUtils.observeWidthHeightCenter(menuVBox,searchButton);
         var menuBtn = new FusionImageButton(ImageManager.get().load("images/menu.png")) {{

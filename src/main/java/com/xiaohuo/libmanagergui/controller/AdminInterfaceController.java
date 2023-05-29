@@ -5,13 +5,15 @@ import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.scene.layout.*;
 
+import java.util.function.Supplier;
+
 /**
  * @author Xiaohuo(Wang Boyun)
  */
 public class AdminInterfaceController extends VScene
 {
 
-    public AdminInterfaceController()
+    public AdminInterfaceController(Supplier<VSceneGroup> sceneGroupSup)
     {
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
@@ -20,7 +22,15 @@ public class AdminInterfaceController extends VScene
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
+
+
         }};
+        addBook.setOnAction(event ->
+        {
+            var scene = new BookAddController();
+            sceneGroupSup.get().addScene(scene);
+            sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
+        });
         var editBook = new FusionButton("编辑书本信息")
         {{
             enableAutoContentWidthHeight();

@@ -8,6 +8,7 @@ import com.xiaohuo.libmanagergui.services.template.Book;
 import com.xiaohuo.libmanagergui.services.template.Journal;
 import com.xiaohuo.libmanagergui.services.template.Newspaper;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
+import io.vproxy.vfx.ui.alert.SimpleAlert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,8 +69,7 @@ public class BooksManageServiceImpl implements BooksManageService
                 //Check if the Isbn is exists.
                 if(getBookId(TypeList.BOOK.getType(), book.getIsbn())!=-1)
                 {
-                    //TODO 考虑如何传递给Controller
-                    System.out.println("The book is already exist!");
+                    SimpleAlert.showAndWait("书本信息重复","该书本已存在，故跳过："+book.getTitle());
                     continue;
                 }
             }
@@ -100,10 +100,10 @@ public class BooksManageServiceImpl implements BooksManageService
             Journal journal = (Journal) baseBooks;
             try
             {
-                //Check if the Isbn is exists.
+                //Check if the Issn is exists.
                 if(getBookId(TypeList.JOURNAL.getType(), journal.getIssn())!=-1)
                 {
-                    System.out.println("The book is already exist!");
+                    SimpleAlert.showAndWait("期刊信息重复","该期刊已存在，故跳过："+journal.getTitle());
                     continue;
                 }
             }
@@ -138,10 +138,11 @@ public class BooksManageServiceImpl implements BooksManageService
             ArrayList<String> newspaperList = newspaper.getBookInfo();
             try
             {
-                //Check if the Isbn is exists.
+                //Check if the Issn is exists.
                 if(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn())!=-1)
                 {
-                    System.out.println("The book is already exist!");
+                    System.out.println(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn()));
+                    SimpleAlert.showAndWait("报刊信息重复","该报刊已存在，故跳过："+newspaper.getTitle());
                     continue;
                 }
             }
@@ -168,7 +169,7 @@ public class BooksManageServiceImpl implements BooksManageService
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
         {
-            bookList = dao.searchBook(value);
+            bookList = dao.searchBookFuzzy(value);
         } catch (CollectionException e)
         {
             exceptions.add(e);
@@ -192,7 +193,7 @@ public class BooksManageServiceImpl implements BooksManageService
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
         {
-            bookList = dao.searchBook("Type",type);
+            bookList = dao.searchBookFuzzy("Type",type);
         } catch (CollectionException e)
         {
             exceptions.add(e);
@@ -212,7 +213,7 @@ public class BooksManageServiceImpl implements BooksManageService
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
         {
-            bookList = dao.searchBook("Author",author);
+            bookList = dao.searchBookFuzzy("Author",author);
         } catch (CollectionException e)
         {
             exceptions.add(e);
@@ -232,7 +233,7 @@ public class BooksManageServiceImpl implements BooksManageService
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
         {
-            bookList = dao.searchBook("Publisher",publisher);
+            bookList = dao.searchBookFuzzy("Publisher",publisher);
         } catch (CollectionException e)
         {
             exceptions.add(e);
@@ -252,7 +253,7 @@ public class BooksManageServiceImpl implements BooksManageService
         Map<Integer,ArrayList<String>>bookList = new HashMap<>();
         try
         {
-            bookList = dao.searchBook("Category",category);
+            bookList = dao.searchBookFuzzy("Category",category);
         } catch (CollectionException e)
         {
             exceptions.add(e);
@@ -271,7 +272,7 @@ public class BooksManageServiceImpl implements BooksManageService
         //Because the identityCode is an only value of the book, so the for loop should only run once.
         if (identityType.equals(TypeList.BOOK.getType()))
         {
-            var list = dao.searchBook("Isbn",identityCode);
+            var list = dao.searchBookFuzzy("Isbn",identityCode);
             for (Integer key:list.keySet())
             {
                 return list.get(key);
@@ -279,7 +280,7 @@ public class BooksManageServiceImpl implements BooksManageService
         }
         else
         {
-            var list = dao.searchBook("Issn",identityCode);
+            var list = dao.searchBookFuzzy("Issn",identityCode);
             for (Integer key:list.keySet())
             {
                 return list.get(key);
@@ -294,7 +295,14 @@ public class BooksManageServiceImpl implements BooksManageService
         BooksManageDao dao = new BooksManageDao();
         Map<Integer,ArrayList<String>>bookList;
         int bookId = 0;
-        bookList = dao.searchBook("Type",identityType);
+        if (identityType.equals(TypeList.BOOK.getType()))
+        {
+            bookList = dao.searchBook("Isbn",identityCode);
+        }
+        else
+        {
+            bookList = dao.searchBook("Issn",identityCode);
+        }
 
         if(bookList.size()>0)
         {
