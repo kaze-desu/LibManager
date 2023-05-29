@@ -49,7 +49,7 @@ public class BookSearchController extends VScene
             setAlignment(Pos.CENTER);
             enableAutoContentWidthHeight();
         }};
-        var searchField = new TextField("输入搜索内容")
+        var searchField = new TextField("Please input the keyword")
         {{
             setAlignment(Pos.CENTER_LEFT);
             setPrefWidth(600);
@@ -58,7 +58,7 @@ public class BookSearchController extends VScene
             managedProperty().bind(visibleProperty());
         }};
 
-        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("标题", "作者", "发布者", "标签", "ISBN", "ISSN", "书本分类"))
+        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Title", "Author", "Publisher", "Category", "ISBN", "ISSN", "Type"))
         {{
             enableAutoContentWidthHeight();
         }};
@@ -78,7 +78,7 @@ public class BookSearchController extends VScene
             getChildren().addAll(searchField,typeListBox,choiceBox);
         }};
         //choice box event
-        choiceBox.setValue("标题");
+        choiceBox.setValue("Title");
         choiceBox.getSelectionModel().selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) ->
                 {
@@ -103,17 +103,17 @@ public class BookSearchController extends VScene
             getNode().setPrefWidth(1000);
             getNode().setPrefHeight(580);
         }};
-        var typeColumn = new VTableColumn<Data,String>("书本分类", data -> data.type);
-        var titleColumn = new VTableColumn<Data,String>("书本标题", data -> data.title);
-        var authorColumn = new VTableColumn<Data,String>("作者", data -> data.author);
-        var publisherColumn = new VTableColumn<Data,String>("发布者", data -> data.publisher);
+        var typeColumn = new VTableColumn<Data,String>("Type", data -> data.type);
+        var titleColumn = new VTableColumn<Data,String>("Title", data -> data.title);
+        var authorColumn = new VTableColumn<Data,String>("Author", data -> data.author);
+        var publisherColumn = new VTableColumn<Data,String>("Publisher", data -> data.publisher);
         var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn);
         var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn);
-        var copyRightColumn = new VTableColumn<Data,String>("版权", data -> data.copyRight);
+        var copyRightColumn = new VTableColumn<Data,String>("CopyRight", data -> data.copyRight);
         form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn,copyRightColumn);
 
 
-        var searchButton = new FusionButton("搜索")
+        var searchButton = new FusionButton("Search")
         {{
             setPrefWidth(100);
             setPrefHeight(30);
@@ -124,11 +124,11 @@ public class BookSearchController extends VScene
         {
             form.getItems().clear();
             var item = choiceBox.getSelectionModel().getSelectedItem();
-            if(!"书本分类".equals(choiceBox.getSelectionModel().getSelectedItem()))
+            if(!"Type".equals(choiceBox.getSelectionModel().getSelectedItem()))
             {
                 switch (item)
                 {
-                    case "标题" ->
+                    case "Title" ->
                     {
                         try
                         {
@@ -153,7 +153,7 @@ public class BookSearchController extends VScene
                             exceptions.add(e);
                         }
                     }
-                    case "作者" ->
+                    case "Author" ->
                     {
                         try
                         {
@@ -178,7 +178,7 @@ public class BookSearchController extends VScene
                             exceptions.add(e);
                         }
                     }
-                    case "发布者" ->
+                    case "Publisher" ->
                     {
                         try
                         {
@@ -203,7 +203,7 @@ public class BookSearchController extends VScene
                             exceptions.add(e);
                         }
                     }
-                    case "标签" ->
+                    case "Category" ->
                     {
                         try
                         {
@@ -296,7 +296,7 @@ public class BookSearchController extends VScene
         var statusService = new BooksStatusServiceImpl();
         var controlPane = new FusionPane(false);
         var vBox = new VBox(10);
-        var borrowButton = new FusionButton("借阅") {{
+        var borrowButton = new FusionButton("Borrow Book") {{
             setPrefWidth(120);
             setPrefHeight(40);
             enableAutoContentWidthHeight();
@@ -312,7 +312,7 @@ public class BookSearchController extends VScene
                             var statusList = statusService.searchBookStatus(selected.type, selected.isbn);
                             if (statusList.isEmpty())
                             {
-                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"该书籍已全部被借阅");
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"This book already all borrowed");
                             }
                             else
                             {
@@ -334,7 +334,7 @@ public class BookSearchController extends VScene
                             var statusList = statusService.searchBookStatus(selected.type, selected.issn);
                             if (statusList.isEmpty())
                             {
-                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"该书籍已全部被借阅");
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"This book already all borrowed");
                             }
                             else
                             {
@@ -353,7 +353,7 @@ public class BookSearchController extends VScene
                 }
             });
         }};
-        var revertButton = new FusionButton("归还") {{
+        var revertButton = new FusionButton("Revert Book") {{
             enableAutoContentWidthHeight();
             setOnAction(e ->
             {
@@ -365,7 +365,7 @@ public class BookSearchController extends VScene
                         var allStatusList = statusService.searchAllBookStatus(TypeList.BOOK.getType(), selected.isbn);
                         if(allStatusList.isEmpty())
                         {
-                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"图书馆中暂无该书籍");
+                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this book");
                         }
                         else
                         {
@@ -377,7 +377,7 @@ public class BookSearchController extends VScene
                     }
                     catch (CollectionException ex)
                     {
-                        StackTraceAlert.showAndWait("在获取书本状态时出现错误：",ex);
+                        StackTraceAlert.showAndWait("There is an error occurred in reverting book：",ex);
                     }
                 }
             });
@@ -389,7 +389,7 @@ public class BookSearchController extends VScene
         FXUtils.observeWidthHeightCenter(vBox,revertButton);
         controlPane.getContentPane().getChildren().add(vBox);
         FXUtils.observeWidthHeightCenter(controlPane.getContentPane(),vBox);
-        searchField.setPromptText("书本标题");
+        searchField.setPromptText("Title");
         hBox.getChildren().addAll(searchBox,searchButton,choiceBox);
         FXUtils.observeWidthHeightCenter(hBox,searchBox);
         FXUtils.observeWidthHeightCenter(hBox,searchButton);

@@ -69,7 +69,7 @@ public class BooksManageServiceImpl implements BooksManageService
                 //Check if the Isbn is exists.
                 if(getBookId(TypeList.BOOK.getType(), book.getIsbn())!=-1)
                 {
-                    SimpleAlert.showAndWait("书本信息重复","该书本已存在，故跳过："+book.getTitle());
+                    SimpleAlert.showAndWait("Book information repeated","Skipped a book because already exist:"+book.getTitle());
                     continue;
                 }
             }
@@ -103,7 +103,7 @@ public class BooksManageServiceImpl implements BooksManageService
                 //Check if the Issn is exists.
                 if(getBookId(TypeList.JOURNAL.getType(), journal.getIssn())!=-1)
                 {
-                    SimpleAlert.showAndWait("期刊信息重复","该期刊已存在，故跳过："+journal.getTitle());
+                    SimpleAlert.showAndWait("Journal information repeated","Skipped a journal because already exist:"+journal.getTitle());
                     continue;
                 }
             }
@@ -142,7 +142,7 @@ public class BooksManageServiceImpl implements BooksManageService
                 if(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn())!=-1)
                 {
                     System.out.println(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn()));
-                    SimpleAlert.showAndWait("报刊信息重复","该报刊已存在，故跳过："+newspaper.getTitle());
+                    SimpleAlert.showAndWait("Newspaper information repeated","Skipped a newspaper because already exist :"+newspaper.getTitle());
                     continue;
                 }
             }

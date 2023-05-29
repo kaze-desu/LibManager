@@ -11,6 +11,6 @@ class BookSearchControllerTest
     void search() throws CollectionException
     {
         BooksManageServiceImpl service = new BooksManageServiceImpl();
-        System.out.println(service.search("tittle1"));
+        System.out.println(service.search("title1"));
     }
 }

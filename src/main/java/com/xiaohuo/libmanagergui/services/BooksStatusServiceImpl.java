@@ -29,13 +29,13 @@ public class BooksStatusServiceImpl implements BooksStatusService
             int bookId = manageService.getBookId(type,identityCode);
             if(bookId == -1)
             {
-                StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
+                StackTraceAlert.showAndWait("The type of the book is not exist !",new CollectionException(exceptions));
             }
             dao.addStatus(bookId,location,status);
         }
         else
         {
-            StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
+            StackTraceAlert.showAndWait("The type of the book is not exist !",new CollectionException(exceptions));
         }
     }
     @Override
@@ -72,7 +72,7 @@ public class BooksStatusServiceImpl implements BooksStatusService
         }
         else
         {
-            StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
+            StackTraceAlert.showAndWait("The type of the book is not exist !",new CollectionException(exceptions));
         }
         return statusList;
     }
@@ -95,7 +95,7 @@ public class BooksStatusServiceImpl implements BooksStatusService
         }
         else
         {
-            StackTraceAlert.showAndWait("书本类型不存在！",new CollectionException(exceptions));
+            StackTraceAlert.showAndWait("The type of the book is not exist ",new CollectionException(exceptions));
         }
         return statusList;
     }

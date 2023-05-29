@@ -29,12 +29,12 @@ public class AdminLoginController extends VScene
                 CornerRadii.EMPTY,
                 new Insets(0,400,0,400)
         )));
-        var usernameField = new TextField("用户名")
+        var usernameField = new TextField("Username")
         {{
             enableAutoContentWidthHeight();
             getNode().setPrefWidth(200);
         }};
-        var passwordField = new TextField("密码")
+        var passwordField = new TextField("Password")
         {{
             enableAutoContentWidthHeight();
             getNode().setPrefWidth(200);
@@ -43,7 +43,7 @@ public class AdminLoginController extends VScene
         inputBox.getChildren().addAll(usernameField,new VPadding(10),passwordField);
         FXUtils.observeWidthHeightCenter(inputBox,usernameField);
         FXUtils.observeWidthHeightCenter(inputBox,passwordField);
-        var loginButton = new FusionButton("登录")
+        var loginButton = new FusionButton("Login")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(50);
@@ -52,13 +52,13 @@ public class AdminLoginController extends VScene
         loginButton.setOnAction(event -> {
             if(usernameField.getText().equals(username) && passwordField.getText().equals(password))
             {
-                SimpleAlert.show("登录成功", "欢迎您，管理员");
+                SimpleAlert.show("Login Successful", "Welcome, Administrator");
                 sceneGroupSup.get().hide(this, VSceneHideMethod.FADE_OUT);
                 sceneGroupSup.get().show(nextScene, VSceneShowMethod.FROM_LEFT);
             }
             else
             {
-                SimpleAlert.showAndWait("登录失败", "用户名或密码错误");
+                SimpleAlert.showAndWait("Login Failed", "username or password is incorrect");
             }
         });
         var hBox = new HBox(10)
