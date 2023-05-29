@@ -311,9 +311,7 @@ public class BookSearchController extends VScene
                             else
                             {
                                 var statusScene = new BookStatusBorrowController(sceneGroupSup,statusList);
-                                /*VSceneGroup status = new VSceneGroup(statusScene);*/
                                 sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
-                                FXUtils.observeWidthHeightCenter(getContentPane(),sceneGroupSup.get().getNode());
                                 FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
                             }
                         }
@@ -335,9 +333,8 @@ public class BookSearchController extends VScene
                             else
                             {
                                 var statusScene = new BookStatusBorrowController(sceneGroupSup,statusList);
-                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.TO_RIGHT);
-                                FXUtils.observeWidthHeightCenter(getContentPane(),sceneGroupSup.get().getNode());
-                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FROM_RIGHT));
+                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
                             }
 
                         }
@@ -366,7 +363,9 @@ public class BookSearchController extends VScene
                         }
                         else
                         {
-                         //TODO 完成归还功能
+                            var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
+                            sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                            FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
                         }
 
                     }
@@ -399,6 +398,7 @@ public class BookSearchController extends VScene
         getContentPane().getChildren().add(panel);
         FXUtils.observeWidthHeightCenter(getContentPane(),panel);
         getContentPane().setMinHeight(650);
+        getContentPane().setMinWidth(400);
         if(exceptions.size()>0)
         {
             throw new CollectionException(exceptions);
@@ -424,174 +424,4 @@ public class BookSearchController extends VScene
             this.tag = data.get(4);
         }
     }
-/*
-    public int search() throws CollectionException
-    {
-        while (true)
-        {
-            System.out.println("Please choose a way to search your book:");
-            System.out.println("1. Search by book type (Not recommended)");
-            System.out.println("2. Search by book name");
-            System.out.println("3. Search by book author");
-            System.out.println("4. Search by book publisher");
-            System.out.println("5. Search by book category");
-            System.out.println("6. Search by book ISBN");
-            System.out.println("7. Search by book ISSN");
-            System.out.println("=================Please input your choice===================");
-            Scanner scanner = new Scanner(System.in);
-            String choice = scanner.nextLine();
-            int bookId;
-            switch (choice)
-            {
-                case "1" ->
-                {
-                    while (true)
-                    {
-                        System.out.println("Please choice a type:");
-                        Map<Integer, String> typeList = new HashMap<>();
-                        int count = 0;
-                        for (TypeList type:TypeList.values())
-                        {
-                            ++count;
-                            System.out.println(count+". "+type.getType());
-                            typeList.put(count,type.getType());
-
-                        }
-                        int type = scanner.nextInt();
-                        if(!typeList.get(type).isEmpty())
-                        {
-                            bookId = searchByType(typeList.get(type));
-                            return bookId;
-                        }
-                        else
-                        {
-                            System.out.println("Please input a valid number!");
-                        }
-                    }
-
-                }
-                case "2" ->
-                {
-                    bookId = searchByName();
-                    return bookId;
-                }
-                case "3" ->
-                {
-                    bookId = searchByAuthor();
-                    return bookId;
-                }
-                case "4" ->
-                {
-                    bookId = searchByPublisher();
-                    return bookId;
-                }
-                case "5" ->
-                {
-                    bookId = searchByCategory();
-                    return bookId;
-                }
-                case "6" ->
-                {
-                    bookId = searchByIsbn();
-                    return bookId;
-                }
-                case "7" ->
-                {
-                    bookId = searchByIssn();
-                    return bookId;
-                }
-                default ->
-                {
-                }
-            }
-        }
-
-    }
-    public int searchByType(String type) throws CollectionException
-    {
-        BooksManageServiceImpl service = new BooksManageServiceImpl();
-        Map<Integer, ArrayList<String>> result;
-        result = service.searchByType(type);
-        int count = 0;
-        if (result.size() == 0)
-        {
-            System.out.println("No result found.");
-            return -1;
-        }
-        else
-        {
-            for (Map.Entry<Integer,ArrayList<String>> information:result.entrySet())
-            {
-                int bookId = information.getKey();
-                ArrayList<String> bookInfo = information.getValue();
-                if(count % 20 == 0 && count != 0)
-                {
-                    System.out.println("Continue?(Y/N)");
-                    Scanner scanner = new Scanner(System.in);
-                    String confirm = scanner.nextLine();
-                    if ("N".equals(confirm) || "n".equals(confirm))
-                    {
-                        System.out.println("Choice your book by inter id:");
-                        bookId = scanner.nextInt();
-                        return bookId;
-                    }
-                    else if("Y".equals(confirm) || "y".equals(confirm))
-                    {
-                        System.out.println("Book id: \n"+bookId);
-                        for (String list:bookInfo)
-                        {
-                            System.out.print(list + " ");
-                        }
-                    }
-                }
-                else if(count == result.size()-1)
-                {
-                    Scanner scanner = new Scanner(System.in);
-                    System.out.println("Book id: "+bookId);
-                    for (String list:bookInfo)
-                    {
-                        System.out.print(list + " ");
-                    }
-                    System.out.println("Choice your book by inter id:");
-                    bookId = scanner.nextInt();
-                    return bookId;
-                }
-                else
-                {
-                    System.out.println("Book id: "+bookId);
-                    for (String list:bookInfo)
-                    {
-                        System.out.print(list + " ");
-                    }
-                }
-                System.out.println();
-                count++;
-            }
-        }
-        return -1;
-    }
-    public int searchByName() throws CollectionException
-    {
-        return -1;
-    }
-    public int searchByAuthor() throws CollectionException
-    {
-        return -1;
-    }
-    public int searchByPublisher() throws CollectionException
-    {
-        return -1;
-    }
-    public int searchByCategory() throws CollectionException
-    {
-        return -1;
-    }
-    public int searchByIsbn() throws CollectionException
-    {
-        return -1;
-    }
-    public int searchByIssn() throws CollectionException
-    {
-        return -1;
-    }*/
 }
