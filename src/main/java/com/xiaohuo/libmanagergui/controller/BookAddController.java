@@ -36,20 +36,20 @@ public class BookAddController extends VScene
         enableAutoContentWidthHeight();
         var service = new BooksManageServiceImpl();
         var textLimit = new TextLimit();
-        var label = new ThemeLabel("添加书本至书籍信息库")
+        var label = new ThemeLabel("Add Book to information database")
         {{
             enableAutoContentWidthHeight();
             setAlignment(Pos.CENTER);
             FontManager.get().setFont(this, settings -> settings.setSize(40));
         }};
-        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("书本","期刊","报刊"))
+        var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Book","Journal","Newspaper"))
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(30);
             setPrefWidth(300);
         }};
-        choiceBox.setValue("书本");
-        var submitButton = new FusionButton("添加")
+        choiceBox.setValue("Book");
+        var submitButton = new FusionButton("Add")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(30);
@@ -57,25 +57,25 @@ public class BookAddController extends VScene
         }};
         var hBox = new HBox(30);
         hBox.getChildren().addAll(choiceBox, submitButton);
-        var titleLabel = new ThemeLabel("标题");
+        var titleLabel = new ThemeLabel("Title");
         var titleField = new TextField()
         {{
             setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
         }};
         var titleBox = new VBox(titleLabel, titleField);
-        var authorLabel = new ThemeLabel("作者");
+        var authorLabel = new ThemeLabel("Author");
         var authorField = new TextField()
         {{
             setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
         }};
         var authorBox = new VBox(authorLabel, authorField);
-        var publisherLabel = new ThemeLabel("出版社");
+        var publisherLabel = new ThemeLabel("Publisher");
         var publisherField = new TextField()
         {{
             setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
         }};
         var publisherBox = new VBox(publisherLabel, publisherField);
-        var categoryLabel = new ThemeLabel("类别");
+        var categoryLabel = new ThemeLabel("Category");
         var categoryField = new TextField()
         {{
             setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
@@ -96,7 +96,7 @@ public class BookAddController extends VScene
             setVisible(false);
             managedProperty().bind(visibleProperty());
         }};
-        var copyRightLabel = new ThemeLabel("版权信息");
+        var copyRightLabel = new ThemeLabel("CopyRight");
         var copyRightField = new TextField()
         {{
             setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
@@ -134,11 +134,11 @@ public class BookAddController extends VScene
                     try
                     {
                         service.addBook(list);
-                        SimpleAlert.show("添加成功","添加书本成功");
+                        SimpleAlert.show("Successful","Add book successfully");
                     }
                     catch (CollectionException e)
                     {
-                        StackTraceAlert.show("添加书本时出现问题",e);
+                        StackTraceAlert.show("There is an error occurred when adding book",e);
                     }
                 }
                 else if ("期刊".equals(choiceBox.getValue()))
@@ -147,11 +147,11 @@ public class BookAddController extends VScene
                     try
                     {
                         service.addJournal(list);
-                        SimpleAlert.show("添加成功","添加期刊成功");
+                        SimpleAlert.show("Successful","Add journal successfully");
                     }
                     catch (CollectionException e)
                     {
-                        StackTraceAlert.show("添加期刊时出现问题",e);
+                        StackTraceAlert.show("There is an error occurred when adding Journal",e);
                     }
                 }
                 else
@@ -160,17 +160,17 @@ public class BookAddController extends VScene
                     try
                     {
                         service.addNewspaper(list);
-                        SimpleAlert.show("添加成功","添加报刊成功");
+                        SimpleAlert.show("Successful","Add newspaper successfully");
                     }
                     catch (CollectionException e)
                     {
-                        StackTraceAlert.show("添加报刊时出现问题",e);
+                        StackTraceAlert.show("There is an error occurred when adding Newspaper",e);
                     }
                 }
             }
             else
             {
-                SimpleAlert.showAndWait("信息不完整","请填写完整信息");
+                SimpleAlert.showAndWait("incomplete information","Please fill in the complete information");
             }
             });
         var vBox = new VBox();

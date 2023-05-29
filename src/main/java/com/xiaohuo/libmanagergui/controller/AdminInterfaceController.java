@@ -17,7 +17,7 @@ public class AdminInterfaceController extends VScene
     {
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
-        var addBook = new FusionButton("添加书本至书籍信息库")
+        var addBook = new FusionButton("Add Book")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
@@ -31,31 +31,31 @@ public class AdminInterfaceController extends VScene
             sceneGroupSup.get().addScene(scene);
             sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
         });
-        var editBook = new FusionButton("编辑书本信息")
+        var editBook = new FusionButton("Edit Book")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
-        var deleteBook = new FusionButton("从信息库删除书本信息")
+        var deleteBook = new FusionButton("Delete Book")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
-        var addStatus = new FusionButton("添加书本库存状态")
+        var addStatus = new FusionButton("Add book Status")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
-        var editStatus = new FusionButton("编辑书本库存状态")
+        var editStatus = new FusionButton("Edit Book Status")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
-        var deleteStatus = new FusionButton("从库存中删除书本")
+        var deleteStatus = new FusionButton("Delete Book Status")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);

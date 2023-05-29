@@ -51,7 +51,7 @@ public class BookStatusRevertController extends VScene
 
         //table
         var idColumn = new VTableColumn<BookStatusBorrowController.Data,Integer>("ID", data -> data.statusId);
-        var locationColumn = new VTableColumn<BookStatusBorrowController.Data,String>("位置", data -> data.location);
+        var locationColumn = new VTableColumn<BookStatusBorrowController.Data,String>("Location", data -> data.location);
         form.getColumns().addAll(idColumn,locationColumn);
         //load data
         for(var entry:statusList.entrySet())
@@ -65,7 +65,7 @@ public class BookStatusRevertController extends VScene
         {{
             enableAutoContentWidthHeight();
         }};
-        var confirmButton = new FusionButton("确定归还")
+        var confirmButton = new FusionButton("Confirm")
         {{
             enableAutoContentWidthHeight();
             setPrefWidth(100);
@@ -75,7 +75,7 @@ public class BookStatusRevertController extends VScene
                         var item = form.getSelectedItem();
                         if(item==null)
                         {
-                            SimpleAlert.showAndWait(Alert.AlertType.WARNING,"请选择需要归还的书原先所在位置");
+                            SimpleAlert.showAndWait(Alert.AlertType.WARNING,"Please select a book location to revert");
                         }
                         else
                         {
@@ -85,16 +85,16 @@ public class BookStatusRevertController extends VScene
                             }
                             catch (CollectionException ex)
                             {
-                                StackTraceAlert.showAndWait("归还失败",ex);
+                                StackTraceAlert.showAndWait("There is an error occurred in reverting book",ex);
                             }
-                            SimpleAlert.show(Alert.AlertType.INFORMATION,"归还成功");
+                            SimpleAlert.show(Alert.AlertType.INFORMATION,"revert book successfully");
                             sceneGroupSup.get().hide(BookStatusRevertController.this, VSceneHideMethod.FADE_OUT);
                             FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () ->sceneGroupSup.get().removeScene(BookStatusRevertController.this));
                         }
                     }
             );
         }};
-        var cancelButton = new FusionButton("取消")
+        var cancelButton = new FusionButton("Cancel")
         {{
             enableAutoContentWidthHeight();
             setPrefWidth(100);

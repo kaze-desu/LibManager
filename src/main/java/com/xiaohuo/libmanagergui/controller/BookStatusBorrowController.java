@@ -51,7 +51,7 @@ public class BookStatusBorrowController extends VScene
 
         //table
         var idColumn = new VTableColumn<Data,Integer>("ID",data -> data.statusId);
-        var locationColumn = new VTableColumn<Data,String>("位置",data -> data.location);
+        var locationColumn = new VTableColumn<Data,String>("Location",data -> data.location);
         form.getColumns().addAll(idColumn,locationColumn);
         //load data
         for(var entry:statusList.entrySet())
@@ -62,7 +62,7 @@ public class BookStatusBorrowController extends VScene
         {{
             enableAutoContentWidthHeight();
         }};
-        var confirmButton = new FusionButton("确定借阅")
+        var confirmButton = new FusionButton("Confirm")
         {{
             enableAutoContentWidthHeight();
             setPrefWidth(100);
@@ -72,7 +72,7 @@ public class BookStatusBorrowController extends VScene
                         var item = form.getSelectedItem();
                         if(item==null)
                         {
-                            SimpleAlert.showAndWait(Alert.AlertType.WARNING,"请选择需要借走的书所在位置");
+                            SimpleAlert.showAndWait(Alert.AlertType.WARNING,"Please select a book location to borrow");
                         }
                         else
                         {
@@ -82,9 +82,9 @@ public class BookStatusBorrowController extends VScene
                             }
                             catch (CollectionException ex)
                             {
-                                StackTraceAlert.showAndWait("借阅失败",ex);
+                                StackTraceAlert.showAndWait("There is an error occurred in borrowing book",ex);
                             }
-                            SimpleAlert.show(Alert.AlertType.INFORMATION,"借阅成功");
+                            SimpleAlert.show("Success","Borrow book successfully");
                             sceneGroupSup.get().hide(BookStatusBorrowController.this, VSceneHideMethod.FADE_OUT);
                             FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () ->sceneGroupSup.get().removeScene(BookStatusBorrowController.this));
 
@@ -92,7 +92,7 @@ public class BookStatusBorrowController extends VScene
                     }
                     );
         }};
-        var cancelButton = new FusionButton("取消")
+        var cancelButton = new FusionButton("Cancel")
         {{
             enableAutoContentWidthHeight();
             setPrefWidth(100);

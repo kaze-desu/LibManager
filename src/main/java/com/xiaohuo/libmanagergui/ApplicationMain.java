@@ -58,7 +58,7 @@ public class ApplicationMain extends Application
             getChildren().add(new VPadding(20));
         }};
         menuScene.getContentPane().getChildren().add(menuVBox);
-        var adminButton = new FusionButton("管理员登录")
+        var adminButton = new FusionButton("AdminLogin")
         {{
             setPrefHeight(100);
             setPrefWidth(200);
@@ -71,7 +71,7 @@ public class ApplicationMain extends Application
         });
         menuVBox.getChildren().add(adminButton);
         FXUtils.observeWidthHeightCenter(menuVBox,adminButton);
-        var searchButton = new FusionButton("图书查询")
+        var searchButton = new FusionButton("Search Book")
         {{
             setPrefHeight(100);
             setPrefWidth(200);
@@ -93,7 +93,7 @@ public class ApplicationMain extends Application
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());
         FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -10 - 60 - 5 - 10);
         FXUtils.observeWidth(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -20);
-        stage.setTitle("图书管理系统");
+        stage.setTitle("Library Manager");
         stage.getStage().setWidth(1280);
         stage.getStage().setHeight(800);
         stage.getStage().centerOnScreen();
