@@ -12,11 +12,11 @@ import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.table.VTableColumn;
 import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -28,10 +28,15 @@ public class BookStatusBorrowController extends VScene
 
     public BookStatusBorrowController(Supplier<VSceneGroup> sceneGroupSup, Map<Integer,String> statusList)
     {
-        super(VSceneRole.DRAWER_VERTICAL);
+        super(VSceneRole.DRAWER_HORIZONTAL);
         enableAutoContentWidthHeight();
-        getNode().setPrefWidth(300);
-        getNode().setPrefHeight(600);
+        getNode().setBackground(new Background(new BackgroundFill(
+                Color.rgb(36, 41, 46),
+                CornerRadii.EMPTY,
+                new Insets(0,300,0,300)
+        )));
+        getNode().minWidth(400);
+        getNode().minHeight(700);
         var service = new BooksStatusServiceImpl();
         var vBox = new VBox()
         {{
@@ -79,7 +84,7 @@ public class BookStatusBorrowController extends VScene
                             {
                                 StackTraceAlert.showAndWait("借阅失败",ex);
                             }
-                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"借阅成功");
+                            SimpleAlert.show(Alert.AlertType.INFORMATION,"借阅成功");
                             sceneGroupSup.get().hide(BookStatusBorrowController.this, VSceneHideMethod.FADE_OUT);
                             FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () ->sceneGroupSup.get().removeScene(BookStatusBorrowController.this));
 
