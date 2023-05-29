@@ -14,7 +14,7 @@ interface BooksManageService
      * The add function will transfer data to DAO, so it's not solving data, only transfer data.
      * @param booksInfo This param is a ArrayList that type of BaseBooks. For safety reason, I use a function (just like book.getXXX) to get unique value from each different extend class.
      *                 As you see, is not quite beautiful isn't it ?
-     *                  4.29: Solved, so concision.
+     *                  4.29: Solved, so concise.
      */
     void add(ArrayList<BaseBooks> booksInfo) throws CollectionException;
 

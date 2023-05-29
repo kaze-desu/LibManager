@@ -89,7 +89,6 @@ public class BooksManageDao
      * @param bookID the ID of the book which the user wants to edit
      * @param column the section of the book which the user wants to edit
      * @param changeContent the content that the user want to change
-     * @throws CollectionException
      */
     public void editBook(int bookID,String column,String changeContent) throws CollectionException
     {
@@ -331,7 +330,7 @@ public class BooksManageDao
      * @throws CollectionException Exception thrown when there is any error.
      */
 
-    public Map<Integer,ArrayList<String>> searchBook(String value) throws CollectionException
+    public Map<Integer,ArrayList<String>> searchBookFuzzy(String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
         //The set is used to store the bookID to avoid duplicate.
@@ -438,13 +437,90 @@ public class BooksManageDao
 
     /**
      * Advanced search for a specific column and value.
-     * ArrayList: 0 is the Type, 1 is the Tittle. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn.
+     * ArrayList: 0 is the Type, 1 is the Tittle. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn 6 is the copyRight.
      * @param column The way to search.
      * @param value The value to search for.
      * @return A map of books that match the search. Integer is bookID, and ArrayList is the information of the book.
      * @throws CollectionException Exception thrown when there is any error.
      */
     public Map<Integer,ArrayList<String>> searchBook(String column, String value) throws CollectionException
+    {
+        List<Throwable>exceptions = new ArrayList<>();
+        Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
+        try
+        {
+            conn = DatabaseConnect.connect();
+
+        }
+        catch (CollectionException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            String sql = "SELECT * FROM %s WHERE %s LIKE ?";
+            sql = String.format(sql,BOOK_TABLE,column);
+            pstmt = conn.prepareStatement(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        try
+        {
+            pstmt.setString(1,value);
+            try
+            {
+                rs = pstmt.executeQuery();
+                while (rs.next())
+                {
+                    ArrayList<String>bookList = new ArrayList<>();
+                    //Add the information of the book to the list.
+                    for (int j=1;j<rs.getMetaData().getColumnCount();j++)
+                    {
+                        if(rs.getString(j+1)!=null)
+                        {
+                            bookList.add(rs.getString(j+1));
+                        }
+                    }
+                    //Add the BookID to Map.
+                    list.put(rs.getInt(1),bookList);
+                }
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                exceptions.add(e);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            exceptions.add(e);
+        }
+        finally
+        {
+            DatabaseClose.close(conn,pstmt,rs);
+        }
+        if(exceptions.size()>0)
+        {
+            throw new CollectionException(exceptions);
+        }
+        return list;
+    }
+    /**
+     * Advanced search for a specific column and value.
+     * The different between standard search is that this method will search value by fuzzy way. This function is useful in most of the time,
+     * but was a disaster when used in the isbn/issn that need accurate search.
+     * ArrayList: 0 is the Type, 1 is the Tittle. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn 6 is the copyRight.
+     * @param column The way to search.
+     * @param value The value to search for.
+     * @return A map of books that match the search. Integer is bookID, and ArrayList is the information of the book.
+     * @throws CollectionException Exception thrown when there is any error.
+     */
+    public Map<Integer,ArrayList<String>> searchBookFuzzy(String column, String value) throws CollectionException
     {
         List<Throwable>exceptions = new ArrayList<>();
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);

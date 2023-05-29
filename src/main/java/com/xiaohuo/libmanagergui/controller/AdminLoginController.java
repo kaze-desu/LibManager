@@ -17,7 +17,6 @@ import java.util.function.Supplier;
  */
 public class AdminLoginController extends VScene
 {
-    private boolean admin = false;
     private final String username = "admin";
     private final String password = "admin";
     public AdminLoginController(Supplier<VSceneGroup> sceneGroupSup,VScene nextScene)
@@ -53,7 +52,6 @@ public class AdminLoginController extends VScene
         loginButton.setOnAction(event -> {
             if(usernameField.getText().equals(username) && passwordField.getText().equals(password))
             {
-                admin = true;
                 SimpleAlert.show("登录成功", "欢迎您，管理员");
                 sceneGroupSup.get().hide(this, VSceneHideMethod.FADE_OUT);
                 sceneGroupSup.get().show(nextScene, VSceneShowMethod.FROM_LEFT);
@@ -73,6 +71,5 @@ public class AdminLoginController extends VScene
         getContentPane().getChildren().add(hBox);
         FXUtils.observeWidthHeightCenter(getContentPane(),hBox);
         getNode().setLayoutY(300);
-
     }
 }
