@@ -106,13 +106,34 @@ public class BookSearchController extends VScene
             getNode().setPrefWidth(1000);
             getNode().setPrefHeight(580);
         }};
-        var typeColumn = new VTableColumn<Data,String>("Type", data -> data.type);
-        var titleColumn = new VTableColumn<Data,String>("Title", data -> data.title);
-        var authorColumn = new VTableColumn<Data,String>("Author", data -> data.author);
-        var publisherColumn = new VTableColumn<Data,String>("Publisher", data -> data.publisher);
-        var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn);
-        var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn);
-        var copyRightColumn = new VTableColumn<Data,String>("CopyRight", data -> data.copyRight);
+        var typeColumn = new VTableColumn<Data,String>("Type", data -> data.type)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
+        var titleColumn = new VTableColumn<Data,String>("Title", data -> data.title)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
+        var authorColumn = new VTableColumn<Data,String>("Author", data -> data.author)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
+        var publisherColumn = new VTableColumn<Data,String>("Publisher", data -> data.publisher)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
+        var isbnColumn = new VTableColumn<Data,String>("ISBN", data -> data.isbn)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
+        var issnColumn = new VTableColumn<Data,String>("ISSN", data -> data.issn)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
+        var copyRightColumn = new VTableColumn<Data,String>("CopyRight", data -> data.copyRight)
+        {{
+            setAlignment(Pos.CENTER);
+        }};
         form.getColumns().addAll(typeColumn, titleColumn, authorColumn, publisherColumn, isbnColumn, issnColumn,copyRightColumn);
 
 
@@ -140,20 +161,25 @@ public class BookSearchController extends VScene
                             {
                                 var data = new Data();
                                 data.setData(information.getValue());
-                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                if (information.getValue().get(0).equals(TypeList.BOOK.getType()))
                                 {
                                     data.isbn = information.getValue().get(5);
-                                } else
+                                }
+                                else if(information.getValue().get(0).equals(TypeList.JOURNAL.getType()))
                                 {
                                     data.issn = information.getValue().get(5);
+                                }
+                                else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                    data.copyRight = information.getValue().get(6);
                                 }
                                 form.getItems().add(data);
 
                             }
                         } catch (CollectionException e)
                         {
-                            e.printStackTrace();
-                            exceptions.add(e);
+                            StackTraceAlert.showAndWait("There is an error occurred in searching books",e);
                         }
                     }
                     case "Author" ->
@@ -165,20 +191,25 @@ public class BookSearchController extends VScene
                             {
                                 var data = new Data();
                                 data.setData(information.getValue());
-                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                if (information.getValue().get(0).equals(TypeList.BOOK.getType()))
                                 {
                                     data.isbn = information.getValue().get(5);
-                                } else
+                                }
+                                else if(information.getValue().get(0).equals(TypeList.JOURNAL.getType()))
                                 {
                                     data.issn = information.getValue().get(5);
+                                }
+                                else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                    data.copyRight = information.getValue().get(6);
                                 }
                                 form.getItems().add(data);
 
                             }
                         } catch (CollectionException e)
                         {
-                            e.printStackTrace();
-                            exceptions.add(e);
+                            StackTraceAlert.showAndWait("There is an error occurred in searching book by author",e);
                         }
                     }
                     case "Publisher" ->
@@ -190,20 +221,25 @@ public class BookSearchController extends VScene
                             {
                                 var data = new Data();
                                 data.setData(information.getValue());
-                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                if (information.getValue().get(0).equals(TypeList.BOOK.getType()))
                                 {
                                     data.isbn = information.getValue().get(5);
-                                } else
+                                }
+                                else if (information.getValue().get(0).equals(TypeList.JOURNAL.getType()))
                                 {
                                     data.issn = information.getValue().get(5);
+                                }
+                                else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                    data.copyRight = information.getValue().get(6);
                                 }
                                 form.getItems().add(data);
 
                             }
                         } catch (CollectionException e)
                         {
-                            e.printStackTrace();
-                            exceptions.add(e);
+                            StackTraceAlert.showAndWait("There is an error occurred in searching book by publisher", e);
                         }
                     }
                     case "Category" ->
@@ -215,20 +251,22 @@ public class BookSearchController extends VScene
                             {
                                 var data = new Data();
                                 data.setData(information.getValue());
-                                if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                                if (information.getValue().get(0).equals(TypeList.BOOK.getType()))
                                 {
                                     data.isbn = information.getValue().get(5);
-                                } else
+                                } else if (information.getValue().get(0).equals(TypeList.JOURNAL.getType()))
                                 {
                                     data.issn = information.getValue().get(5);
+                                }else
+                                {
+                                    data.issn = information.getValue().get(5);
+                                    data.copyRight = information.getValue().get(6);
                                 }
                                 form.getItems().add(data);
-
                             }
                         } catch (CollectionException e)
                         {
-                            e.printStackTrace();
-                            exceptions.add(e);
+                            StackTraceAlert.showAndWait("There is an error occurred in searching book by category",e);
                         }
                     }
                     case "ISBN" ->
@@ -241,22 +279,37 @@ public class BookSearchController extends VScene
                             data.isbn = list.get(5);
                         } catch (CollectionException e)
                         {
-                            e.printStackTrace();
-                            exceptions.add(e);
+                            StackTraceAlert.showAndWait("There is an error occurred in searching book by isbn",e);
                         }
                     }
                     case "ISSN" ->
                     {
-                        try
+                        if(choiceBox.getSelectionModel().getSelectedItem().equals(TypeList.JOURNAL.getType()))
                         {
-                            var list = service.searchByIdentityCode(TypeList.JOURNAL.getType(), searchField.getText());
-                            var data = new Data();
-                            data.setData(list);
-                            data.isbn = list.get(5);
-                        } catch (CollectionException e)
+                            try
+                            {
+                                var list = service.searchByIdentityCode(TypeList.JOURNAL.getType(), searchField.getText());
+                                var data = new Data();
+                                data.setData(list);
+                                data.issn = list.get(5);
+                            } catch (CollectionException e)
+                            {
+                                StackTraceAlert.showAndWait("There is an error occurred in searching journal by issn",e);
+                            }
+                        }
+                        else
                         {
-                            e.printStackTrace();
-                            exceptions.add(e);
+                            try
+                            {
+                                var list = service.searchByIdentityCode(TypeList.NEWSPAPER.getType(), searchField.getText());
+                                var data = new Data();
+                                data.setData(list);
+                                data.issn = list.get(5);
+                                data.copyRight = list.get(6);
+                            } catch (CollectionException e)
+                            {
+                                StackTraceAlert.showAndWait("There is an error occurred in searching newspaper by issn",e);
+                            }
                         }
                     }
                 }
@@ -270,15 +323,15 @@ public class BookSearchController extends VScene
                     {
                         var data = new Data();
                         data.setData(information.getValue());
-                        if (information.getValue().get(0).equals(TypeList.BOOK.toString()))
+                        if (information.getValue().get(0).equals(TypeList.BOOK.getType()))
                         {
                             data.isbn = information.getValue().get(5);
                         }
-                        else if (information.getValue().get(0).equals(TypeList.JOURNAL.toString()))
+                        else if (information.getValue().get(0).equals(TypeList.JOURNAL.getType()))
                         {
                             data.issn = information.getValue().get(5);
                         }
-                        else if (information.getValue().get(0).equals(TypeList.NEWSPAPER.toString()))
+                        else if (information.getValue().get(0).equals(TypeList.NEWSPAPER.getType()))
                         {
                             data.issn = information.getValue().get(5);
                             data.copyRight = information.getValue().get(6);
@@ -381,6 +434,50 @@ public class BookSearchController extends VScene
                     catch (CollectionException ex)
                     {
                         StackTraceAlert.showAndWait("There is an error occurred in reverting book：",ex);
+                    }
+                }
+                else if (selected.type.equals(TypeList.JOURNAL.getType()))
+                {
+                    try
+                    {
+                        var allStatusList = statusService.searchAllBookStatus(TypeList.JOURNAL.getType(), selected.issn);
+                        if(allStatusList.isEmpty())
+                        {
+                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this journal");
+                        }
+                        else
+                        {
+                            var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
+                            sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                            FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
+                        }
+
+                    }
+                    catch (CollectionException ex)
+                    {
+                        StackTraceAlert.showAndWait("There is an error occurred in reverting journal：",ex);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        var allStatusList = statusService.searchAllBookStatus(TypeList.NEWSPAPER.getType(), selected.issn);
+                        if(allStatusList.isEmpty())
+                        {
+                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this newspaper");
+                        }
+                        else
+                        {
+                            var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
+                            sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                            FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
+                        }
+
+                    }
+                    catch (CollectionException ex)
+                    {
+                        StackTraceAlert.showAndWait("There is an error occurred in reverting newspaper：",ex);
                     }
                 }
             });
