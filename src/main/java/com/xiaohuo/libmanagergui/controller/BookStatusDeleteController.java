@@ -22,10 +22,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 
-public class BookStatusEditController extends VScene
+public class BookStatusDeleteController extends VScene
 {
     private Map<Integer,String> statusList;
-    public BookStatusEditController()
+    public BookStatusDeleteController()
     {
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
@@ -74,50 +74,7 @@ public class BookStatusEditController extends VScene
             managedProperty().bind(visibleProperty());
         }};
         searchHBox.getChildren().addAll(typeBox,searchVBox,searchButton);
-        var locationLabel = new ThemeLabel("Location");
-        var locationField = new TextField()
-        {{
-            setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
-        }};
-        var locationBox = new VBox()
-        {{
-            setVisible(false);
-            setPrefWidth(300);
-            setPrefHeight(30);
-            managedProperty().bind(visibleProperty());
-        }};
-        locationBox.getChildren().addAll(locationLabel, locationField);
-        var isbnLabel = new ThemeLabel("ISBN");
-        var isbnField = new TextField()
-        {{
-            setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
-        }};
-        var isbnBox = new VBox()
-        {{
-            setVisible(false);
-            setPrefWidth(300);
-            setPrefHeight(50);
-            managedProperty().bind(visibleProperty());
-        }};
-        isbnBox.getChildren().addAll(isbnLabel, isbnField);
-        FXUtils.observeWidthHeightCenter(isbnBox,isbnLabel);
-        FXUtils.observeWidthHeightCenter(isbnBox,isbnField);
-        var issnLabel = new ThemeLabel("ISSN");
-        var issnField = new TextField()
-        {{
-            setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
-        }};
-        var issnBox = new VBox()
-        {{
-            setVisible(false);
-            setPrefWidth(300);
-            setPrefHeight(50);
-            managedProperty().bind(visibleProperty());
-        }};
-        issnBox.getChildren().addAll(issnLabel, issnField);
-        FXUtils.observeWidthHeightCenter(issnBox,issnLabel);
-        FXUtils.observeWidthHeightCenter(issnBox,issnField);
-        var confirmButton = new FusionButton("Confirm")
+        var confirmButton = new FusionButton("Delete")
         {{
             setPrefWidth(200);
             setPrefHeight(50);
@@ -155,7 +112,7 @@ public class BookStatusEditController extends VScene
                 var temp = service.searchBookStatus(typeList.getSelectionModel().getSelectedItem(), searchField.getText());
                 if (temp.isEmpty())
                 {
-                    SimpleAlert.showAndWait("No result", "No result found, please check your ISBN/ISSN or add your first status");
+                    SimpleAlert.showAndWait("Done", "All status solved.");
                 }
                 else
                 {
@@ -167,7 +124,6 @@ public class BookStatusEditController extends VScene
                     }
                     form.getNode().setVisible(true);
                     searchHBox.setVisible(false);
-                    locationBox.setVisible(true);
                     confirmBox.setVisible(true);
                     searchHBox.setVisible(false);
                 }
@@ -184,15 +140,14 @@ public class BookStatusEditController extends VScene
         {
             try
             {
-                service.editBookLocation(form.getSelectedItem().statusId, locationField.getText());
-                SimpleAlert.show("Success", "Book location has been edited");
+                service.deleteBookStatus(form.getSelectedItem().statusId);
+                SimpleAlert.show("Success", "Book location has been deleted");
                 form.getItems().clear();
                 var temp = service.searchBookStatus(typeList.getSelectionModel().getSelectedItem(), searchField.getText());
                 if (temp.isEmpty())
                 {
-                    SimpleAlert.showAndWait("No data", "Could not find any data, please check your ISBN/ISSN or add your first status");
+                    SimpleAlert.showAndWait("Done", "All status solved.");
                     form.getNode().setVisible(false);
-                    locationBox.setVisible(false);
                     searchVBox.setVisible(true);
                     confirmBox.setVisible(false);
                     searchHBox.setVisible(true);
@@ -206,7 +161,6 @@ public class BookStatusEditController extends VScene
                         form.getItems().add(new BookStatusBorrowController.Data(entry.getKey(),entry.getValue()));
                     }
                 }
-
             }
             catch (CollectionException e)
             {
@@ -218,13 +172,12 @@ public class BookStatusEditController extends VScene
         {
             form.getItems().clear();
             form.getNode().setVisible(false);
-            locationBox.setVisible(false);
             searchVBox.setVisible(true);
             confirmBox.setVisible(false);
             searchHBox.setVisible(true);
         });
         var vBox = new VBox();
-        vBox.getChildren().addAll(searchHBox,locationBox,new VPadding(10),isbnBox,issnBox,new VPadding(10),form.getNode(),new VPadding(10),confirmBox);
+        vBox.getChildren().addAll(searchHBox,new VPadding(10),form.getNode(),new VPadding(10),confirmBox);
         FXUtils.observeWidthHeightCenter(getContentPane(),vBox);
         getContentPane().getChildren().add(vBox);
     }

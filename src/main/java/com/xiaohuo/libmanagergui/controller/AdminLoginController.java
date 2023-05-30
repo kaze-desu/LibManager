@@ -8,6 +8,7 @@ import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -24,6 +25,7 @@ public class AdminLoginController extends VScene
     {
         super(VSceneRole.DRAWER_HORIZONTAL);
         enableAutoContentWidthHeight();
+        var textLimit = new TextLimit();
         getNode().setPrefHeight(100);
         getNode().setBackground(new Background(new BackgroundFill(
                 Color.rgb(36, 41, 46),
@@ -34,11 +36,13 @@ public class AdminLoginController extends VScene
         {{
             enableAutoContentWidthHeight();
             getNode().setPrefWidth(200);
+            setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
         }};
         var passwordField = new TextField("Password")
         {{
             enableAutoContentWidthHeight();
             getNode().setPrefWidth(200);
+            setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
         }};
         var inputBox = new VBox();
         inputBox.getChildren().addAll(usernameField,new VPadding(10),passwordField);

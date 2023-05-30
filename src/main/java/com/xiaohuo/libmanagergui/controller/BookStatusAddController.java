@@ -1,6 +1,7 @@
 package com.xiaohuo.libmanagergui.controller;
 
 import com.xiaohuo.libmanagergui.exception.CollectionException;
+import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.BooksStatusServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
 import io.vproxy.vfx.manager.font.FontManager;
@@ -31,6 +32,7 @@ public class BookStatusAddController extends VScene
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
         var service = new BooksStatusServiceImpl();
+        var manageService = new BooksManageServiceImpl();
         var textLimit = new TextLimit();
         var label = new ThemeLabel("Add Book Status")
         {{
@@ -98,34 +100,81 @@ public class BookStatusAddController extends VScene
                 {
                     try
                     {
-                        service.addBookStatus(TypeList.BOOK.getType(), isbnField.getText(), locationField.getText(),true);
+                        if (manageService.getBookId(TypeList.BOOK.getType(), isbnField.getText())==-1)
+                        {
+                            SimpleAlert.showAndWait("Not Found","The book is not found");
+                        }
+                        else
+                        {
+                            try
+                            {
+                                service.addBookStatus(TypeList.BOOK.getType(), isbnField.getText(), locationField.getText(),true);
+                                SimpleAlert.showAndWait("Success","Add book's status successfully");
+                            }
+                            catch (CollectionException e)
+                            {
+                                StackTraceAlert.showAndWait("There is an error occurred in adding book's status",e);
+                            }
+                        }
                     }
                     catch (CollectionException e)
                     {
-                        StackTraceAlert.showAndWait("There is an error occurred in adding book's status",e);
+                        StackTraceAlert.showAndWait("There is an error occurred in checking book exist",e);
                     }
                 }
                 else if(typeBox.getSelectionModel().getSelectedItem().equals(TypeList.JOURNAL.getType()))
                 {
                     try
                     {
-                        service.addBookStatus(TypeList.JOURNAL.getType(), issnField.getText(), locationField.getText(),true);
+                        if (manageService.getBookId(TypeList.JOURNAL.getType(), issnField.getText())==-1)
+                        {
+                            SimpleAlert.showAndWait("Not Found","The journal is not found");
+                        }
+                        else
+                        {
+                            try
+                            {
+                                service.addBookStatus(TypeList.JOURNAL.getType(), issnField.getText(), locationField.getText(),true);
+                                SimpleAlert.showAndWait("Success","Add journal's status successfully");
+                            }
+                            catch (CollectionException e)
+                            {
+                                StackTraceAlert.showAndWait("There is an error occurred in adding journal's status",e);
+                            }
+                        }
                     }
                     catch (CollectionException e)
                     {
-                        StackTraceAlert.showAndWait("There is an error occurred in adding journal's status",e);
+                        StackTraceAlert.showAndWait("There is an error occurred in checking journal exist",e);
                     }
+
                 }
                 else
                 {
                     try
                     {
-                        service.addBookStatus(TypeList.NEWSPAPER.getType(), issnField.getText(), locationField.getText(),true);
+                        if (manageService.getBookId(TypeList.NEWSPAPER.getType(), issnField.getText())==-1)
+                        {
+                            SimpleAlert.showAndWait("Not Found","The journal is not found");
+                        }
+                        else
+                        {
+                            try
+                            {
+                                service.addBookStatus(TypeList.NEWSPAPER.getType(), issnField.getText(), locationField.getText(),true);
+                                SimpleAlert.showAndWait("Success","Add newspaper's status successfully");
+                            }
+                            catch (CollectionException e)
+                            {
+                                StackTraceAlert.showAndWait("There is an error occurred in adding newspaper's status",e);
+                            }
+                        }
                     }
                     catch (CollectionException e)
                     {
-                        StackTraceAlert.showAndWait("There is an error occurred in adding newspaper's status",e);
+                        StackTraceAlert.showAndWait("There is an error occurred in checking newspaper exist",e);
                     }
+
                 }
             }
             else

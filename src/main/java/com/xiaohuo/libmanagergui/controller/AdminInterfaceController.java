@@ -85,6 +85,12 @@ public class AdminInterfaceController extends VScene
             setPrefHeight(100);
             setPrefWidth(200);
         }};
+        deleteStatus.setOnAction(event ->
+        {
+            var scene = new BookStatusDeleteController();
+            sceneGroupSup.get().addScene(scene);
+            sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
+        });
         var gridPane = new GridPane();
         gridPane.setLayoutY(200);
         gridPane.setHgap(50);
