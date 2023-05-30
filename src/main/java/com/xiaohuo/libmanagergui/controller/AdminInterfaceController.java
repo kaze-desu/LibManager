@@ -37,24 +37,48 @@ public class AdminInterfaceController extends VScene
             setPrefHeight(100);
             setPrefWidth(200);
         }};
+        editBook.setOnAction(event ->
+        {
+            var scene = new BookEditController();
+            sceneGroupSup.get().addScene(scene);
+            sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
+        });
         var deleteBook = new FusionButton("Delete Book")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
+        deleteBook.setOnAction(event ->
+        {
+            var scene = new BookDeleteController();
+            sceneGroupSup.get().addScene(scene);
+            sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
+        });
         var addStatus = new FusionButton("Add book Status")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
+        addStatus.setOnAction(event ->
+        {
+            var scene = new BookStatusAddController();
+            sceneGroupSup.get().addScene(scene);
+            sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
+        });
         var editStatus = new FusionButton("Edit Book Status")
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(100);
             setPrefWidth(200);
         }};
+        editStatus.setOnAction(event ->
+        {
+            var scene = new BookStatusEditController();
+            sceneGroupSup.get().addScene(scene);
+            sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_LEFT);
+        });
         var deleteStatus = new FusionButton("Delete Book Status")
         {{
             enableAutoContentWidthHeight();

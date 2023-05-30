@@ -33,7 +33,7 @@ public class BooksManageDao
         {
             conn = DatabaseConnect.connect();
             InitTableDao initTableDao = new InitTableDao(conn);
-            String sql = "BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Tittle VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL";
+            String sql = "BookID INT PRIMARY KEY AUTO_INCREMENT,Type VARCHAR(255) NOT NULL ,Title VARCHAR(255) NOT NULL,Author VARCHAR(255) NOT NULL,Publisher VARCHAR(255) NOT NULL,Category VARCHAR(255) NOT NULL";
             initTableDao.initTable(BOOK_TABLE,sql);
         }
         catch (CollectionException e)
@@ -437,7 +437,7 @@ public class BooksManageDao
 
     /**
      * Advanced search for a specific column and value.
-     * ArrayList: 0 is the Type, 1 is the Tittle. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn 6 is the copyRight.
+     * ArrayList: 0 is the Type, 1 is the Title. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn 6 is the copyRight.
      * @param column The way to search.
      * @param value The value to search for.
      * @return A map of books that match the search. Integer is bookID, and ArrayList is the information of the book.
@@ -514,7 +514,7 @@ public class BooksManageDao
      * Advanced search for a specific column and value.
      * The different between standard search is that this method will search value by fuzzy way. This function is useful in most of the time,
      * but was a disaster when used in the isbn/issn that need accurate search.
-     * ArrayList: 0 is the Type, 1 is the Tittle. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn 6 is the copyRight.
+     * ArrayList: 0 is the Type, 1 is the Title. 2 is the Author, 3 is the Publisher, 4 is the Category, 5 is the Isbn/Issn 6 is the copyRight.
      * @param column The way to search.
      * @param value The value to search for.
      * @return A map of books that match the search. Integer is bookID, and ArrayList is the information of the book.

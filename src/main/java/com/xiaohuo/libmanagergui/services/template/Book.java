@@ -17,9 +17,9 @@ public class Book extends BaseBooks
     /**
      * This is the constructor of Book, which is used to initialize the information of a book.
      */
-    public Book(String tittle, String author, String publisher, String category,String isbn)
+    public Book(String title, String author, String publisher, String category,String isbn)
     {
-        super(tittle, author, publisher, category);
+        super(title, author, publisher, category);
         this.isbn = isbn;
 
         String type = TypeList.BOOK.getType();

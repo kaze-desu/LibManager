@@ -8,7 +8,6 @@ import com.xiaohuo.libmanagergui.services.template.Book;
 import com.xiaohuo.libmanagergui.services.template.Journal;
 import com.xiaohuo.libmanagergui.services.template.Newspaper;
 import com.xiaohuo.libmanagergui.services.template.TypeList;
-import io.vproxy.vfx.ui.alert.SimpleAlert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,9 +46,7 @@ public class BooksManageServiceImpl implements BooksManageService
         }
 
     }
-
-    @Override
-    public void addBook(ArrayList<BaseBooks> booksInfo) throws CollectionException
+    private void addBook(ArrayList<BaseBooks> booksInfo) throws CollectionException
     {
         BooksManageDao dao = new BooksManageDao();
         ArrayList<String>columnList = new ArrayList<>();
@@ -57,14 +54,15 @@ public class BooksManageServiceImpl implements BooksManageService
         columnList.add("Isbn");
 
         //Add books to the table.
-        String bookSql = "INSERT INTO %s (Type,Tittle,Author,Publisher,Category,Isbn) VALUES ";
+        String bookSql = "INSERT INTO %s (Type,Title,Author,Publisher,Category,Isbn) VALUES ";
         bookSql = String.format(bookSql,BOOK_TABLE);
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : booksInfo)
         {
             //Cast the object to Book, because we need the Isbn which only in book class.
             Book book = (Book) baseBooks;
-            try
+            //dilapidated
+            /*            try
             {
                 //Check if the Isbn is exists.
                 if(getBookId(TypeList.BOOK.getType(), book.getIsbn())!=-1)
@@ -75,16 +73,14 @@ public class BooksManageServiceImpl implements BooksManageService
             }
             catch(CollectionException ignored)
             {
-            }
+            }*/
             ArrayList<String> bookList = book.getBookInfo();
             list.put(booksInfo.indexOf(book),bookList);
         }
         //Call the add method.
         dao.addBook(columnList,bookSql,list);
     }
-
-    @Override
-    public void addJournal(ArrayList<BaseBooks>journalInfo)throws CollectionException
+    private void addJournal(ArrayList<BaseBooks> journalInfo)throws CollectionException
     {
         BooksManageDao dao = new BooksManageDao();
         ArrayList<String>columnList = new ArrayList<>();
@@ -92,13 +88,14 @@ public class BooksManageServiceImpl implements BooksManageService
         columnList.add("Issn");
 
         //Add journals to the table.
-        String journalSql = "INSERT INTO %s (Type,Tittle,Author,Publisher,Category,Issn) VALUES ";
+        String journalSql = "INSERT INTO %s (Type,Title,Author,Publisher,Category,Issn) VALUES ";
         journalSql = String.format(journalSql,BOOK_TABLE);
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : journalInfo)
         {
             Journal journal = (Journal) baseBooks;
-            try
+            //dilapidated
+            /*try
             {
                 //Check if the Issn is exists.
                 if(getBookId(TypeList.JOURNAL.getType(), journal.getIssn())!=-1)
@@ -109,7 +106,7 @@ public class BooksManageServiceImpl implements BooksManageService
             }
             catch(CollectionException ignored)
             {
-            }
+            }*/
             ArrayList<String> bookList = journal.getBookInfo();
             list.put(journalInfo.indexOf(journal),bookList);
         }
@@ -119,8 +116,7 @@ public class BooksManageServiceImpl implements BooksManageService
 
     }
 
-    @Override
-    public void addNewspaper(ArrayList<BaseBooks>newspaperInfo)throws CollectionException
+    private void addNewspaper(ArrayList<BaseBooks>newspaperInfo)throws CollectionException
     {
         BooksManageDao dao = new BooksManageDao();
         ArrayList<String>columnList = new ArrayList<>();
@@ -129,14 +125,15 @@ public class BooksManageServiceImpl implements BooksManageService
         columnList.add("CopyRight");
 
         //Add books to the table.
-        String newspaperSql = "INSERT INTO %s (Type,Tittle,Author,Publisher,Category,Issn,CopyRight) VALUES ";
+        String newspaperSql = "INSERT INTO %s (Type,Title,Author,Publisher,Category,Issn,CopyRight) VALUES ";
         newspaperSql = String.format(newspaperSql,BOOK_TABLE);
         Map<Integer,ArrayList<String>> list = new HashMap<>(1000);
         for (BaseBooks baseBooks : newspaperInfo)
         {
             Newspaper newspaper = (Newspaper) baseBooks;
             ArrayList<String> newspaperList = newspaper.getBookInfo();
-            try
+            //dilapidated
+            /*try
             {
                 //Check if the Issn is exists.
                 if(getBookId(TypeList.NEWSPAPER.getType(), newspaper.getIssn())!=-1)
@@ -148,7 +145,7 @@ public class BooksManageServiceImpl implements BooksManageService
             }
             catch(CollectionException ignored)
             {
-            }
+            }*/
             list.put(newspaperInfo.indexOf(newspaper),newspaperList);
         }
         //Call the add method.

@@ -17,31 +17,6 @@ interface BooksManageService
      *                  4.29: Solved, so concise.
      */
     void add(ArrayList<BaseBooks> booksInfo) throws CollectionException;
-
-    /**
-     * Add books to database.
-     * @Type: Book
-     * @param booksInfo List of books.
-     * @throws CollectionException Exception thrown when there is any error.
-     */
-    void addBook(ArrayList<BaseBooks> booksInfo) throws CollectionException;
-
-    /**
-     * Add journal to database.
-     * @Type: Journal
-     * @param journalInfo List of journals.
-     * @throws CollectionException Exception thrown when there is any error.
-     */
-    void addJournal(ArrayList<BaseBooks>journalInfo)throws CollectionException;
-
-    /**
-     * Add newspaper to database.
-     * @Type: Newspaper
-     * @param newspaperInfo List of newspapers.
-     * @throws CollectionException Exception thrown when there is any error.
-     */
-    void addNewspaper(ArrayList<BaseBooks>newspaperInfo)throws CollectionException;
-
     /* Search function part */
 
     /**

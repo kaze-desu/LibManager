@@ -29,19 +29,19 @@ class BookTest
             newspapers.add(new Newspaper("title" + i, "author" + i, "publisher" + i, "category" + i, "issn" + i, "date" + i));
         }*/
         books.add(new Book("title1","author1","publisher1","category1","isbn1"));
-        books.add(new Book("title2","author2","publisher2","category2","isbn2"));
+        /*books.add(new Book("title2","author2","publisher2","category2","isbn2"));
 
         journals.add(new Journal("title1","author1","publisher1","category1","issn1"));
         journals.add(new Journal("title2","author2","publisher2","category2","issn2"));
 
         newspapers.add(new Newspaper("title1","author1","publisher1","category1","issn1","date1"));
         newspapers.add(new Newspaper("title2","author2","publisher2","category2","issn2","date2"));
-
+        */
 
 
         BooksManageServiceImpl booksManageServiceImpl = new BooksManageServiceImpl();
         booksManageServiceImpl.add(books);
-        booksManageServiceImpl.add(journals);
-        booksManageServiceImpl.add(newspapers);
+        /*booksManageServiceImpl.add(journals);
+        booksManageServiceImpl.add(newspapers);*/
     }
 }

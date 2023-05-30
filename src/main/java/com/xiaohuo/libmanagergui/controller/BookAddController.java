@@ -6,6 +6,7 @@ import com.xiaohuo.libmanagergui.services.BooksManageServiceImpl;
 import com.xiaohuo.libmanagergui.services.template.Book;
 import com.xiaohuo.libmanagergui.services.template.Journal;
 import com.xiaohuo.libmanagergui.services.template.Newspaper;
+import com.xiaohuo.libmanagergui.services.template.TypeList;
 import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.ui.alert.SimpleAlert;
 import io.vproxy.vfx.ui.alert.StackTraceAlert;
@@ -46,7 +47,7 @@ public class BookAddController extends VScene
         {{
             enableAutoContentWidthHeight();
             setPrefHeight(30);
-            setPrefWidth(300);
+            setPrefWidth(500);
         }};
         choiceBox.setValue("Book");
         var submitButton = new FusionButton("Add")
@@ -111,11 +112,13 @@ public class BookAddController extends VScene
             {
                 isbnBox.setVisible(true);
                 issnBox.setVisible(false);
+                copyRightBox.setVisible(false);
             }
             else if(newValue.intValue() == 1)
             {
                 isbnBox.setVisible(false);
                 issnBox.setVisible(true);
+                copyRightBox.setVisible(false);
             }
             else
             {
@@ -128,12 +131,12 @@ public class BookAddController extends VScene
             if(titleField.getText().length()>0&&authorField.getText().length()>0&&publisherField.getText().length()>0&&categoryField.getText().length()>0||isbnField.getText().length()>0||(issnField.getText().length()>0&&copyRightField.getText().length()>0))
             {
                 ArrayList<BaseBooks> list = new ArrayList<>();
-                if ("书本".equals(choiceBox.getValue()))
+                if (choiceBox.getSelectionModel().getSelectedItem().equals(TypeList.BOOK.getType()))
                 {
                     list.add(new Book(titleField.getText(),authorField.getText(),publisherField.getText(),categoryField.getText(),isbnField.getText()));
                     try
                     {
-                        service.addBook(list);
+                        service.add(list);
                         SimpleAlert.show("Successful","Add book successfully");
                     }
                     catch (CollectionException e)
@@ -141,12 +144,12 @@ public class BookAddController extends VScene
                         StackTraceAlert.show("There is an error occurred when adding book",e);
                     }
                 }
-                else if ("期刊".equals(choiceBox.getValue()))
+                else if (choiceBox.getSelectionModel().getSelectedItem().equals(TypeList.JOURNAL.getType()))
                 {
                     list.add(new Journal(titleField.getText(),authorField.getText(),publisherField.getText(),categoryField.getText(),issnField.getText()));
                     try
                     {
-                        service.addJournal(list);
+                        service.add(list);
                         SimpleAlert.show("Successful","Add journal successfully");
                     }
                     catch (CollectionException e)
@@ -159,7 +162,7 @@ public class BookAddController extends VScene
                     list.add(new Newspaper(titleField.getText(),authorField.getText(),publisherField.getText(),categoryField.getText(),issnField.getText(),copyRightField.getText()));
                     try
                     {
-                        service.addNewspaper(list);
+                        service.add(list);
                         SimpleAlert.show("Successful","Add newspaper successfully");
                     }
                     catch (CollectionException e)

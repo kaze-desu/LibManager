@@ -94,7 +94,7 @@ public class BooksStatusDao
     /**
      * search the status by bookID
      * @param bookId bookId
-     * @return ArrayList<Status> : 0 is the bookID, 1 is the location, 2 is the status.
+     * @return ArrayList<Status> : 0 is the StatusID, 1 is the location, 2 is the status.
      * @throws CollectionException Exception thrown when there is any error.
      */
     public Map<Integer,ArrayList<Status>> searchStatus(int bookId)throws CollectionException
