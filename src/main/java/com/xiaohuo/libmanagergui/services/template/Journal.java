@@ -15,9 +15,9 @@ public class Journal extends BaseBooks
     /**
      * This is the constructor of Journal, which is used to initialize the information of a journal.
      */
-    public Journal(String tittle, String author, String publisher, String category,String issn)
+    public Journal(String title, String author, String publisher, String category,String issn)
     {
-        super(tittle, author, publisher, category);
+        super(title, author, publisher, category);
         this.issn = issn;
         String type = TypeList.JOURNAL.getType();
         setType(type);

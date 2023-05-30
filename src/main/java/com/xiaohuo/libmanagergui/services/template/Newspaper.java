@@ -17,9 +17,9 @@ public class Newspaper extends BaseBooks
     /**
      * This is the constructor of Newspaper, which is used to initialize the information of a newspaper.
      */
-    public Newspaper(String tittle, String author, String publisher, String category,String issn,String copyRight)
+    public Newspaper(String title, String author, String publisher, String category,String issn,String copyRight)
     {
-        super(tittle, author, publisher, category);
+        super(title, author, publisher, category);
         this.issn = issn;
         this.copyRight = copyRight;
 

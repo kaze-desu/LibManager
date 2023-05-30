@@ -33,6 +33,7 @@ public class ApplicationMain extends Application
 {
     private final List<VScene> scenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
+    public static boolean loginStatus = false;
     @Override
     public void start(Stage primaryStage) throws CollectionException
     {
@@ -66,8 +67,16 @@ public class ApplicationMain extends Application
         adminButton.setDisableAnimation(true);
         adminButton.setOnAction(e ->
         {
-            stage.getRootSceneGroup().hide(menuScene, VSceneHideMethod.TO_LEFT);
-            sceneGroup.show(scenes.get(2), VSceneShowMethod.FADE_IN);
+            if(!loginStatus)
+            {
+                stage.getRootSceneGroup().hide(menuScene, VSceneHideMethod.TO_LEFT);
+                sceneGroup.show(scenes.get(2), VSceneShowMethod.FADE_IN);
+            }
+            else
+            {
+                 stage.getRootSceneGroup().hide(menuScene, VSceneHideMethod.TO_LEFT);
+                 sceneGroup.show(scenes.get(1), VSceneShowMethod.FROM_LEFT);
+            }
         });
         menuVBox.getChildren().add(adminButton);
         FXUtils.observeWidthHeightCenter(menuVBox,adminButton);
@@ -77,7 +86,11 @@ public class ApplicationMain extends Application
             setPrefWidth(200);
         }};
         searchButton.setDisableAnimation(true);
-        searchButton.setOnAction(e ->sceneGroup.show(scenes.get(0), VSceneShowMethod.FROM_RIGHT));
+        searchButton.setOnAction(e ->
+        {
+            stage.getRootSceneGroup().hide(menuScene, VSceneHideMethod.TO_LEFT);
+            sceneGroup.show(scenes.get(0), VSceneShowMethod.FROM_RIGHT);
+        });
         menuVBox.getChildren().add(searchButton);
         FXUtils.observeWidthHeightCenter(menuVBox,searchButton);
         var menuBtn = new FusionImageButton(ImageManager.get().load("images/menu.png")) {{
@@ -87,7 +100,14 @@ public class ApplicationMain extends Application
             setLayoutX(-2);
             setLayoutY(-1);
         }};
-        menuBtn.setOnAction(e -> stage.getRootSceneGroup().show(menuScene, VSceneShowMethod.FROM_LEFT));
+        menuBtn.setOnAction(e ->
+        {
+            if(loginStatus)
+            {
+                adminButton.setText("AdminPanel");
+            }
+            stage.getRootSceneGroup().show(menuScene, VSceneShowMethod.FROM_LEFT);
+        });
         stage.getRoot().getContentPane().getChildren().add(menuBtn);
         stage.getInitialScene().enableAutoContentWidthHeight();
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());

@@ -1,5 +1,6 @@
 package com.xiaohuo.libmanagergui.controller;
 
+import com.xiaohuo.libmanagergui.ApplicationMain;
 import io.vproxy.vfx.ui.alert.SimpleAlert;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.layout.VPadding;
@@ -48,11 +49,13 @@ public class AdminLoginController extends VScene
             enableAutoContentWidthHeight();
             setPrefHeight(50);
             setPrefWidth(100);
+
         }};
         loginButton.setOnAction(event -> {
             if(usernameField.getText().equals(username) && passwordField.getText().equals(password))
             {
                 SimpleAlert.show("Login Successful", "Welcome, Administrator");
+                ApplicationMain.loginStatus = true;
                 sceneGroupSup.get().hide(this, VSceneHideMethod.FADE_OUT);
                 sceneGroupSup.get().show(nextScene, VSceneShowMethod.FROM_LEFT);
             }
