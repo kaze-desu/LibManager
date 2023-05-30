@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -37,6 +38,7 @@ public class BookSearchController extends VScene
     {
         super(VSceneRole.MAIN);
         List<Throwable> exceptions = new ArrayList<>();
+        var textLimit = new TextLimit();
         enableAutoContentWidthHeight();
         var service = new BooksManageServiceImpl();
         var hBox = new HBox(20)
@@ -56,6 +58,7 @@ public class BookSearchController extends VScene
             setPrefHeight(30);
             enableAutoContentWidthHeight();
             managedProperty().bind(visibleProperty());
+            setTextFormatter(new TextFormatter<>(textLimit.modifyChange));
         }};
 
         var choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Title", "Author", "Publisher", "Category", "ISBN", "ISSN", "Type"))
