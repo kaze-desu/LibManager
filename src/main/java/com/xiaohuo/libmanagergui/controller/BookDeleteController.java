@@ -104,7 +104,7 @@ public class BookDeleteController extends VScene
                 {
                     ArrayList<String> book = service.getBookByTitleAndType(input,type);
                     statusID = statusService.getStatusId(statusService.searchBookStatus(type,book.get(4)));
-                    service.deleteBookByIdentityCode(type,book.get(6),statusID);
+                    service.deleteBookByIdentityCode(type,book.get(4),statusID);
                     SimpleAlert.showAndWait("Successful","Delete successfully");
                 }
                 catch (Exception e)
