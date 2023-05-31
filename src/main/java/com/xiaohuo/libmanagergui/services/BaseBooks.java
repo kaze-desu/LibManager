@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public abstract class BaseBooks
 {
 
-    public String type;
+    protected String type;
     protected String title;
     protected String author;
     protected String publisher;
@@ -63,12 +63,6 @@ public abstract class BaseBooks
     {
         return author;
     }
-
-    public String getCategory()
-    {
-        return category;
-    }
-
     public String getTitle()
     {
         return title;
