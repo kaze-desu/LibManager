@@ -274,9 +274,16 @@ public class BookSearchController extends VScene
                         try
                         {
                             var list = service.searchByIdentityCode(TypeList.BOOK.getType(), searchField.getText());
-                            var data = new Data();
-                            data.setData(list);
-                            data.isbn = list.get(5);
+                            if(list == null || list.isEmpty())
+                            {
+                                SimpleAlert.showAndWait("Not Found","There is no book with this isbn");
+                            }
+                            else
+                            {
+                                var data = new Data();
+                                data.setData(list);
+                                data.isbn = list.get(5);
+                            }
                         } catch (CollectionException e)
                         {
                             StackTraceAlert.showAndWait("There is an error occurred in searching book by isbn",e);
@@ -289,9 +296,16 @@ public class BookSearchController extends VScene
                             try
                             {
                                 var list = service.searchByIdentityCode(TypeList.JOURNAL.getType(), searchField.getText());
-                                var data = new Data();
-                                data.setData(list);
-                                data.issn = list.get(5);
+                                if(list == null || list.isEmpty())
+                                {
+                                    SimpleAlert.showAndWait("Not Found","There is no book with this issn");
+                                }
+                                else
+                                {
+                                    var data = new Data();
+                                    data.setData(list);
+                                    data.issn = list.get(5);
+                                }
                             } catch (CollectionException e)
                             {
                                 StackTraceAlert.showAndWait("There is an error occurred in searching journal by issn",e);
@@ -302,10 +316,17 @@ public class BookSearchController extends VScene
                             try
                             {
                                 var list = service.searchByIdentityCode(TypeList.NEWSPAPER.getType(), searchField.getText());
-                                var data = new Data();
-                                data.setData(list);
-                                data.issn = list.get(5);
-                                data.copyRight = list.get(6);
+                                if(list == null || list.isEmpty())
+                                {
+                                    SimpleAlert.showAndWait("Not Found","There is no book with this issn");
+                                }
+                                else
+                                {
+                                    var data = new Data();
+                                    data.setData(list);
+                                    data.issn = list.get(5);
+                                    data.copyRight = list.get(6);
+                                }
                             } catch (CollectionException e)
                             {
                                 StackTraceAlert.showAndWait("There is an error occurred in searching newspaper by issn",e);
@@ -414,72 +435,76 @@ public class BookSearchController extends VScene
             setOnAction(e ->
             {
                 var selected = form.getSelectedItem();
-                if(selected.type.equals(TypeList.BOOK.getType()))
+                if(selected!=null)
                 {
-                    try
+                    if(selected.type.equals(TypeList.BOOK.getType()))
                     {
-                        var allStatusList = statusService.searchAllBookStatus(TypeList.BOOK.getType(), selected.isbn);
-                        if(allStatusList.isEmpty())
+                        try
                         {
-                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this book");
-                        }
-                        else
-                        {
-                            var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
-                            sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
-                            FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
-                        }
+                            var allStatusList = statusService.searchAllBookStatus(TypeList.BOOK.getType(), selected.isbn);
+                            if(allStatusList.isEmpty())
+                            {
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this book");
+                            }
+                            else
+                            {
+                                var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
+                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
+                            }
 
+                        }
+                        catch (CollectionException ex)
+                        {
+                            StackTraceAlert.showAndWait("There is an error occurred in reverting book：",ex);
+                        }
                     }
-                    catch (CollectionException ex)
+                    else if (selected.type.equals(TypeList.JOURNAL.getType()))
                     {
-                        StackTraceAlert.showAndWait("There is an error occurred in reverting book：",ex);
+                        try
+                        {
+                            var allStatusList = statusService.searchAllBookStatus(TypeList.JOURNAL.getType(), selected.issn);
+                            if(allStatusList.isEmpty())
+                            {
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this journal");
+                            }
+                            else
+                            {
+                                var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
+                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
+                            }
+
+                        }
+                        catch (CollectionException ex)
+                        {
+                            StackTraceAlert.showAndWait("There is an error occurred in reverting journal：",ex);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var allStatusList = statusService.searchAllBookStatus(TypeList.NEWSPAPER.getType(), selected.issn);
+                            if(allStatusList.isEmpty())
+                            {
+                                SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this newspaper");
+                            }
+                            else
+                            {
+                                var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
+                                sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
+                                FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
+                            }
+
+                        }
+                        catch (CollectionException ex)
+                        {
+                            StackTraceAlert.showAndWait("There is an error occurred in reverting newspaper：",ex);
+                        }
                     }
                 }
-                else if (selected.type.equals(TypeList.JOURNAL.getType()))
-                {
-                    try
-                    {
-                        var allStatusList = statusService.searchAllBookStatus(TypeList.JOURNAL.getType(), selected.issn);
-                        if(allStatusList.isEmpty())
-                        {
-                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this journal");
-                        }
-                        else
-                        {
-                            var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
-                            sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
-                            FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
-                        }
 
-                    }
-                    catch (CollectionException ex)
-                    {
-                        StackTraceAlert.showAndWait("There is an error occurred in reverting journal：",ex);
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        var allStatusList = statusService.searchAllBookStatus(TypeList.NEWSPAPER.getType(), selected.issn);
-                        if(allStatusList.isEmpty())
-                        {
-                            SimpleAlert.showAndWait(Alert.AlertType.INFORMATION,"Library has not collect this newspaper");
-                        }
-                        else
-                        {
-                            var statusScene = new BookStatusRevertController(sceneGroupSup,allStatusList);
-                            sceneGroupSup.get().addScene(statusScene, VSceneHideMethod.FADE_OUT);
-                            FXUtils.runDelay(50,()->sceneGroupSup.get().show(statusScene, VSceneShowMethod.FADE_IN));
-                        }
-
-                    }
-                    catch (CollectionException ex)
-                    {
-                        StackTraceAlert.showAndWait("There is an error occurred in reverting newspaper：",ex);
-                    }
-                }
             });
             setPrefWidth(120);
             setPrefHeight(40);
