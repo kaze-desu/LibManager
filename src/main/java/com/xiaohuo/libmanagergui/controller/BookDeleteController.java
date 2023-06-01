@@ -87,29 +87,44 @@ public class BookDeleteController extends VScene
 
             if("ISBN/ISSN".equals(deleteType.getSelectionModel().getSelectedItem()))
             {
-                try
+                if(!deleteField.getText().isEmpty() ||deleteField.getText().length() != 0)
                 {
-                   statusID = statusService.getStatusId(statusService.searchBookStatus(type,input));
-                   service.deleteBookByIdentityCode(type,input,statusID);
-                    SimpleAlert.showAndWait("Successful","Delete successfully");
+                    try
+                    {
+                        statusID = statusService.getStatusId(statusService.searchBookStatus(type,input));
+                        service.deleteBookByIdentityCode(type,input,statusID);
+                        SimpleAlert.showAndWait("Successful","Delete successfully");
+                    }
+                    catch (Exception e)
+                    {
+                        StackTraceAlert.showAndWait("There is an error occurred in deleting book by ISBN/ISSN",e);
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    StackTraceAlert.showAndWait("There is an error occurred in deleting book by ISBN/ISSN",e);
+                    SimpleAlert.showAndWait("Error","Please input ISBN/ISSN");
                 }
+
             }
             else
             {
-                try
+                if(!deleteField.getText().isEmpty()||deleteField.getText().length() != 0)
                 {
-                    ArrayList<String> book = service.getBookByTitleAndType(input,type);
-                    statusID = statusService.getStatusId(statusService.searchBookStatus(type,book.get(4)));
-                    service.deleteBookByIdentityCode(type,book.get(4),statusID);
-                    SimpleAlert.showAndWait("Successful","Delete successfully");
+                    try
+                    {
+                        ArrayList<String> book = service.getBookByTitleAndType(input,type);
+                        statusID = statusService.getStatusId(statusService.searchBookStatus(type,book.get(4)));
+                        service.deleteBookByIdentityCode(type,book.get(4),statusID);
+                        SimpleAlert.showAndWait("Successful","Delete successfully");
+                    }
+                    catch (Exception e)
+                    {
+                        StackTraceAlert.showAndWait("There is an error occurred in deleting book by title",e);
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    StackTraceAlert.showAndWait("There is an error occurred in deleting book by title",e);
+                    SimpleAlert.showAndWait("Error","Please input title");
                 }
             }
         });
