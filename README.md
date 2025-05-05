@@ -1,5 +1,20 @@
 # LibManager
 A library manage system
+# DEMO
+### 搜索
+![image14](https://github.com/user-attachments/assets/fd22156d-463f-4e20-b5f5-9d154ce6ab65)
+### 借阅/归还
+![image15](https://github.com/user-attachments/assets/6da49086-0d18-4a31-bc0a-5850965fd1cf)
+![image16](https://github.com/user-attachments/assets/80f9f326-f6b5-492b-9940-7469e810b748)
+### 后台
+![image17](https://github.com/user-attachments/assets/8806916c-8c84-4f51-a7f0-2fef8cfc44ca)
+### 书籍管理
+![image18](https://github.com/user-attachments/assets/c32b56dc-bf99-49fa-81b6-a80a0197f1a8)
+![image19](https://github.com/user-attachments/assets/eb93a26d-3b5d-4ed3-aae5-56b51950d972)
+![image20](https://github.com/user-attachments/assets/81a34c04-a09e-482c-854c-c1d012604b61)
+![image21](https://github.com/user-attachments/assets/2c30d308-6cf5-44ad-b4f0-be38c5a2b55e)
+![image22](https://github.com/user-attachments/assets/63b66e99-81de-40b4-93de-1f3490b6d15c)
+![image23](https://github.com/user-attachments/assets/a72db7f1-448a-4b9c-812e-b26f10383f5e)
 # 数据库
 gz-cdb-5vzxa0ap.sql.tencentcdb.com:63812
 
